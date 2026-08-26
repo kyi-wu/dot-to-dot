@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Connect the Dots - Level Editor</title>
+
+    <link
+        rel="stylesheet"
+        href="editor.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="editor-container">
+
+    <!-- ================================= -->
+    <!-- HEADER -->
+    <!-- ================================= -->
+
+    <header>
+
+        <h1>Connect the Dots — Level Editor</h1>
+
+        <p>
+            Upload an image and click on it to create points.
+        </p>
+
+    </header>
+
+
+    <!-- ================================= -->
+    <!-- TOOLBAR -->
+    <!-- ================================= -->
+
+    <div class="toolbar">
+
+        <label class="upload-button">
+
+            Upload Image
+
+            <input
+                type="file"
+                id="imageInput"
+                accept="image/*"
+                hidden
+            >
+
+        </label>
+
+
+        <button id="undoButton">
+            Undo
+        </button>
+
+
+        <button id="clearButton">
+            Clear
+        </button>
+
+
+        <button id="exportButton">
+            Export
+        </button>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- MAIN AREA -->
+    <!-- ================================= -->
+
+    <div class="editor-layout">
+
+
+        <!-- ================================= -->
+        <!-- CANVAS -->
+        <!-- ================================= -->
+
+        <div class="canvas-container">
+
+            <svg
+                id="editorSvg"
+
+                viewBox="0 0 800 600"
+
+                preserveAspectRatio="xMidYMid meet"
+            >
+
+                <!-- Background image -->
+
+                <image
+                    id="editorImage"
+
+                    x="0"
+                    y="0"
+
+                    width="800"
+                    height="600"
+
+                    preserveAspectRatio="xMidYMid meet"
+                />
+
+
+                <!-- Points are added here -->
+
+            </svg>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- SIDE PANEL -->
+        <!-- ================================= -->
+
+        <aside class="side-panel">
+
+
+            <h2>Level Settings</h2>
+
+
+            <!-- Image path -->
+
+            <label>
+
+                Image path
+
+                <input
+                    type="text"
+                    id="imagePath"
+                    value="images/level1.png"
+                >
+
+            </label>
+
+
+            <!-- Show numbers -->
+
+            <label class="checkbox-row">
+
+                <input
+                    type="checkbox"
+                    id="showNumbers"
+                    checked
+                >
+
+                Show Numbers
+
+            </label>
+
+
+            <hr>
+
+
+            <!-- Point count -->
+
+            <div class="point-count">
+
+                Points:
+                <strong id="pointCount">0</strong>
+
+            </div>
+
+
+            <!-- Point list -->
+
+            <div
+                id="pointList"
+                class="point-list"
+            ></div>
+
+
+        </aside>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- EXPORT AREA -->
+    <!-- ================================= -->
+
+    <section class="export-section">
+
+        <h2>Export</h2>
+
+        <textarea
+            id="exportOutput"
+            readonly
+            placeholder="Your level code will appear here..."
+        ></textarea>
+
+        <button id="copyButton">
+            Copy to Clipboard
+        </button>
+
+    </section>
+
+
+</div>
+
+
+<script src="editor.js"></script>
+
+</body>
+
+</html>

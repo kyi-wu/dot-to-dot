@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Connect the Dots</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="game-container">
+
+        <header class="game-header">
+            <h1>Connect the Dots</h1>
+
+            <div class="level-info">
+                Level <span id="currentLevel">1</span> / 4
+            </div>
+        </header>
+
+
+        <main class="game-area">
+
+            <div id="game-board" class="game-board">
+
+                <svg
+                    id="game-svg"
+                    viewBox="0 0 800 600"
+                    preserveAspectRatio="xMidYMid meet"
+                >
+
+                    <!-- Background image -->
+                    <image
+                        id="background-image"
+                        x="0"
+                        y="0"
+                        width="800"
+                        height="600"
+                        preserveAspectRatio="xMidYMid meet"
+                    />
+
+                    <!-- Lines will be inserted here -->
+
+                    <!-- Points will be inserted here -->
+
+                </svg>
+
+            </div>
+
+        </main>
+
+
+        <div class="controls">
+
+            <button id="restart-button">
+                Restart
+            </button>
+
+            <button id="numbers-button">
+                Hide Numbers
+            </button>
+
+            <button
+                id="next-button"
+                class="hidden"
+            >
+                Next Level
+            </button>
+
+        </div>
+
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+    </div>
+
+
+    <script src="levels.js"></script>
+    <script src="game.js"></script>
+
+</body>
+</html>

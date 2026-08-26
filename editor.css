@@ -1,0 +1,341 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    background: #f5f3ed;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #333;
+}
+
+
+.editor-container {
+
+    width: min(1200px, 95vw);
+
+    margin: 30px auto;
+}
+
+
+header {
+
+    margin-bottom: 20px;
+}
+
+
+header h1 {
+
+    margin-bottom: 5px;
+}
+
+
+header p {
+
+    color: #666;
+
+    margin-top: 0;
+}
+
+
+/* =================================
+   TOOLBAR
+================================= */
+
+.toolbar {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    flex-wrap: wrap;
+}
+
+
+button,
+.upload-button {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 18px;
+
+    background: #333;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+
+button:hover,
+.upload-button:hover {
+
+    background: #555;
+}
+
+
+/* =================================
+   LAYOUT
+================================= */
+
+.editor-layout {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        280px;
+
+    gap: 20px;
+
+    align-items: start;
+}
+
+
+/* =================================
+   SVG
+================================= */
+
+.canvas-container {
+
+    background: white;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+#editorSvg {
+
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    cursor: crosshair;
+
+    touch-action: none;
+}
+
+
+/* =================================
+   POINTS
+================================= */
+
+.editor-point {
+
+    fill: white;
+
+    stroke: #e53935;
+
+    stroke-width: 3;
+
+    pointer-events: none;
+}
+
+
+.editor-number {
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    fill: #222;
+
+    text-anchor: middle;
+
+    pointer-events: none;
+
+    user-select: none;
+}
+
+
+/* =================================
+   SIDE PANEL
+================================= */
+
+.side-panel {
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+.side-panel h2 {
+
+    margin-top: 0;
+}
+
+
+.side-panel label {
+
+    display: block;
+
+    margin-bottom: 15px;
+
+    font-size: 14px;
+}
+
+
+.side-panel input[type="text"] {
+
+    width: 100%;
+
+    margin-top: 5px;
+
+    padding: 8px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 6px;
+}
+
+
+.checkbox-row {
+
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.point-count {
+
+    margin-bottom: 15px;
+
+    font-size: 16px;
+}
+
+
+/* =================================
+   POINT LIST
+================================= */
+
+.point-list {
+
+    max-height: 350px;
+
+    overflow-y: auto;
+
+    border-top: 1px solid #eee;
+}
+
+
+.point-item {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid #eee;
+
+    font-size: 14px;
+}
+
+
+.point-item button {
+
+    padding: 4px 8px;
+
+    font-size: 12px;
+
+    background: #d32f2f;
+}
+
+
+/* =================================
+   EXPORT
+================================= */
+
+.export-section {
+
+    margin-top: 20px;
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 12px;
+}
+
+
+.export-section h2 {
+
+    margin-top: 0;
+}
+
+
+#exportOutput {
+
+    width: 100%;
+
+    min-height: 250px;
+
+    resize: vertical;
+
+    font-family: monospace;
+
+    font-size: 13px;
+
+    padding: 12px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    background: #fafafa;
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 800px) {
+
+    .editor-layout {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .side-panel {
+
+        order: 2;
+
+    }
+
+}

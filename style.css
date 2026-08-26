@@ -1,0 +1,306 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #f5f3ed;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #333;
+}
+
+
+.game-container {
+    width: min(900px, 95vw);
+
+    text-align: center;
+}
+
+
+.game-header {
+    margin-bottom: 20px;
+}
+
+
+.game-header h1 {
+    margin: 0 0 8px;
+
+    font-size: 28px;
+}
+
+
+.level-info {
+    font-size: 18px;
+    color: #666;
+}
+
+
+/* -------------------------
+   Game board
+------------------------- */
+
+.game-board {
+    width: 100%;
+
+    background: white;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+#game-svg {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    touch-action: manipulation;
+}
+
+.game-area {
+    background: #f3ead7;
+}
+
+/* -------------------------
+   Background image
+------------------------- */
+
+#background-image {
+
+    opacity: 0;
+
+    transition:
+        opacity 1s ease;
+}
+
+
+#background-image.revealed {
+    opacity: 1;
+}
+
+
+/* -------------------------
+   Connection lines
+------------------------- */
+
+.connection-line {
+
+    stroke: #4caf50;
+
+    stroke-width: 5;
+
+    stroke-linecap: round;
+
+    fill: none;
+
+    pointer-events: none;
+
+    animation: draw-line 0.3s ease-out;
+}
+
+
+@keyframes draw-line {
+
+    from {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+
+}
+
+
+/* -------------------------
+   Points
+------------------------- */
+
+.point-group {
+    cursor: pointer;
+}
+
+
+.point-circle {
+
+    fill: white;
+
+    stroke: #333;
+
+    stroke-width: 3;
+
+    transition:
+        transform 0.15s,
+        fill 0.15s;
+}
+
+
+.point-group:hover .point-circle {
+
+    fill: #eeeeee;
+
+    transform: scale(1.15);
+}
+
+
+.point-circle.completed {
+
+    fill: #4caf50;
+
+    stroke: #388e3c;
+}
+
+
+.point-circle.current {
+
+    animation: pulse 1s infinite;
+}
+
+
+@keyframes pulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+/* -------------------------
+   Numbers
+------------------------- */
+
+.point-number {
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    fill: #333;
+
+    pointer-events: none;
+
+    user-select: none;
+}
+
+
+/* -------------------------
+   Controls
+------------------------- */
+
+.controls {
+
+    margin-top: 20px;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+
+button {
+
+    border: none;
+
+    padding: 10px 20px;
+
+    border-radius: 8px;
+
+    background: #333;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        transform 0.1s;
+}
+
+
+button:hover {
+
+    background: #555;
+}
+
+
+button:active {
+
+    transform: scale(0.96);
+}
+
+
+button.hidden {
+
+    display: none;
+}
+
+
+/* -------------------------
+   Message
+------------------------- */
+
+.message {
+
+    min-height: 30px;
+
+    margin-top: 15px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+}
+
+
+/* -------------------------
+   Mobile
+------------------------- */
+
+@media (max-width: 600px) {
+
+    .game-header h1 {
+        font-size: 23px;
+    }
+
+    .level-info {
+        font-size: 16px;
+    }
+
+    button {
+        padding: 9px 15px;
+        font-size: 14px;
+    }
+
+}
