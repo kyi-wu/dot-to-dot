@@ -42,6 +42,35 @@ clickSound.volume = 0.5;
 // const completeSound = new Audio("sounds/complete.mp3");
 // clickSound.volume = 0.5;
 
+const backgroundMusic =
+    new Audio("sounds/background.mp3");
+
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.2;
+
+
+// Try to start immediately
+backgroundMusic.play().catch(() => {
+    console.log("Waiting for user interaction to start music.");
+});
+
+
+// If autoplay is blocked,
+// start music after the first user interaction
+document.addEventListener(
+    "click",
+    function startMusic() {
+
+        backgroundMusic.play()
+            .catch(() => {});
+
+        document.removeEventListener(
+            "click",
+            startMusic
+        );
+
+    }
+);
 
 // ==========================================
 // SVG NAMESPACE
