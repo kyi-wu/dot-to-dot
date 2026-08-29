@@ -197,15 +197,11 @@ body {
 ------------------------- */
 
 .point-number {
-
-    font-size: 14px;
-
-    font-weight: bold;
-
+    font-family: "Patrick Hand", cursive;
+    font-size: 18px;
+    font-weight: 400;
     fill: #333;
-
     pointer-events: none;
-
     user-select: none;
 }
 
