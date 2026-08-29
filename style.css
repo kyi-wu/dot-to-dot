@@ -300,3 +300,82 @@ button.hidden {
     }
 
 }
+
+/* -------------------------
+   Level Completion Dialog （对话框）
+------------------------- */
+
+.level-dialog {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.25);
+
+    z-index: 1000;
+
+    opacity: 1;
+
+    transition: opacity 0.3s ease;
+}
+
+
+.level-dialog.hidden {
+    display: none;
+}
+
+/* 对话框样式 */
+.level-dialog-box {
+
+    width: min(500px, 85vw);
+
+    padding: 30px;
+
+    background: #fff;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.2);
+
+    text-align: center;
+
+    animation: dialog-pop 0.3s ease-out;
+}
+
+
+#level-dialog-text {
+
+    margin-bottom: 25px;
+
+    font-family:
+        "Patrick Hand",
+        cursive;
+
+    font-size: 24px;
+
+    line-height: 1.4;
+
+    color: #333;
+
+}
+
+
+@keyframes dialog-pop {
+
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}

@@ -8,7 +8,8 @@ const levels = [
     image: "images/level1.png",
 
     showNumbers: true,
-
+    completionMessage:
+                "level 1 completes 🐱",
     points: [
         { x: 136, y: 273 },
         { x: 352, y: 107 },
@@ -23,6 +24,8 @@ const levels = [
 
     {
         image: "images/level2.png",
+        completionMessage:
+                "level 2 completes 🐱",
 
         showNumbers: true,
 
@@ -49,6 +52,8 @@ const levels = [
 
     {
         image: "images/level3.png",
+        completionMessage:
+                "level 3 completes 🐱",
 
         showNumbers: true,
 
@@ -75,6 +80,8 @@ const levels = [
 
     {
         image: "images/level4.png",
+        completionMessage:
+                "level 4 completes 🐱",
 
         showNumbers: true,
 

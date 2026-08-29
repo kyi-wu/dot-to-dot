@@ -1,3 +1,4 @@
+
 // ==========================================
 // GAME CONFIG
 // ==========================================
@@ -32,31 +33,55 @@ const nextButton =
 const messageElement =
     document.getElementById("message");
 
-//声效 
-const clickSound = new Audio("sounds/click_sound.mp3");
+
+// ==========================================
+// SOUND 音效
+// ==========================================
+
+const clickSound =
+    new Audio("sounds/click_sound.mp3");
+
 clickSound.volume = 0.5;
 
-// const wrongSound = new Audio("sounds/wrong.mp3");
-// clickSound.volume = 0.5;
 
-// const completeSound = new Audio("sounds/complete.mp3");
-// clickSound.volume = 0.5;
+// const wrongSound =
+//     new Audio("sounds/wrong.mp3");
+
+// wrongSound.volume = 0.5;
+
+
+// const completeSound =
+//     new Audio("sounds/complete.mp3");
+
+// completeSound.volume = 0.5;
+
+
+// ==========================================
+// BACKGROUND MUSIC
+// ==========================================
 
 const backgroundMusic =
     new Audio("sounds/background.mp3");
 
 backgroundMusic.loop = true;
+
 backgroundMusic.volume = 0.2;
 
 
 // Try to start immediately
+
 backgroundMusic.play().catch(() => {
-    console.log("Waiting for user interaction to start music.");
+
+    console.log(
+        "Waiting for user interaction to start music."
+    );
+
 });
 
 
 // If autoplay is blocked,
 // start music after the first user interaction
+
 document.addEventListener(
     "click",
     function startMusic() {
@@ -72,11 +97,73 @@ document.addEventListener(
     }
 );
 
+
+// ==========================================
+// LEVEL COMPLETION DIALOG
+// ==========================================
+
+// Create dialog automatically.
+// No HTML changes are required.
+
+const levelDialog =
+    document.createElement("div");
+
+levelDialog.classList.add(
+    "level-dialog",
+    "hidden"
+);
+
+
+const levelDialogBox =
+    document.createElement("div");
+
+levelDialogBox.classList.add(
+    "level-dialog-box"
+);
+
+
+const levelDialogText =
+    document.createElement("div");
+
+levelDialogText.classList.add(
+    "level-dialog-text"
+);
+
+
+const levelDialogButton =
+    document.createElement("button");
+
+levelDialogButton.classList.add(
+    "level-dialog-button"
+);
+
+levelDialogButton.textContent =
+    "Continue";
+
+
+levelDialogBox.appendChild(
+    levelDialogText
+);
+
+levelDialogBox.appendChild(
+    levelDialogButton
+);
+
+levelDialog.appendChild(
+    levelDialogBox
+);
+
+document.body.appendChild(
+    levelDialog
+);
+
+
 // ==========================================
 // SVG NAMESPACE
 // ==========================================
 
-const SVG_NS = "http://www.w3.org/2000/svg";
+const SVG_NS =
+    "http://www.w3.org/2000/svg";
 
 
 // ==========================================
@@ -105,22 +192,39 @@ loadLevel(currentLevelIndex);
 
 function loadLevel(levelIndex) {
 
-    const level = levels[levelIndex];
+    const level =
+        levels[levelIndex];
+
 
     currentPointIndex = 0;
 
     levelCompleted = false;
 
+
     numbersVisible =
         GAME_CONFIG.showNumbers &&
         level.showNumbers;
 
+
     currentLevelElement.textContent =
         levelIndex + 1;
 
+
     messageElement.textContent = "";
 
-    nextButton.classList.add("hidden");
+
+    nextButton.classList.add(
+        "hidden"
+    );
+
+
+    // --------------------------------------
+    // Hide completion dialog
+    // --------------------------------------
+
+    levelDialog.classList.add(
+        "hidden"
+    );
 
 
     // --------------------------------------
@@ -131,6 +235,7 @@ function loadLevel(levelIndex) {
         "href",
         level.image
     );
+
 
     backgroundImage.classList.remove(
         "revealed"
@@ -144,7 +249,9 @@ function loadLevel(levelIndex) {
     svg.querySelectorAll(
         ".connection-line, .point-group"
     ).forEach(element => {
+
         element.remove();
+
     });
 
 
@@ -188,11 +295,14 @@ function createPoint(point, index) {
             "g"
         );
 
+
     group.classList.add(
         "point-group"
     );
 
-    group.dataset.index = index;
+
+    group.dataset.index =
+        index;
 
 
     // ======================================
@@ -205,35 +315,44 @@ function createPoint(point, index) {
             "circle"
         );
 
+
     hitArea.setAttribute(
         "cx",
         point.x
     );
+
 
     hitArea.setAttribute(
         "cy",
         point.y
     );
 
+
     // 30px clickable radius
+
     hitArea.setAttribute(
         "r",
         "30"
     );
 
+
     // Important:
     // transparent but still clickable
+
     hitArea.setAttribute(
         "fill",
         "transparent"
     );
+
 
     hitArea.setAttribute(
         "pointer-events",
         "all"
     );
 
-    hitArea.style.cursor = "pointer";
+
+    hitArea.style.cursor =
+        "pointer";
 
 
     // ======================================
@@ -246,36 +365,43 @@ function createPoint(point, index) {
             "circle"
         );
 
+
     circle.setAttribute(
         "cx",
         point.x
     );
+
 
     circle.setAttribute(
         "cy",
         point.y
     );
 
+
     circle.setAttribute(
         "r",
         "10"
     );
 
+
     circle.classList.add(
         "point-circle"
     );
 
+
     // Make sure CSS transform doesn't
     // move the circle away from its position
+
     circle.style.transformBox =
         "fill-box";
+
 
     circle.style.transformOrigin =
         "center";
 
 
     // ======================================
-    // NUMBER *数字位置
+    // NUMBER 数字位置
     // ======================================
 
     const number =
@@ -285,42 +411,30 @@ function createPoint(point, index) {
         );
 
 
-    // 数字在中心
-    // number.setAttribute(
-    //     "x",
-    //     point.x
-    // );
-
-    // number.setAttribute(
-    //     "y",
-    //     point.y + 5
-    // );
-
-    // number.setAttribute(
-    //     "text-anchor",
-    //     "middle"
-    // );
-
-
     // 数字在左上角
+
     number.setAttribute(
-    "x",
-    point.x - 10
+        "x",
+        point.x - 10
     );
+
 
     number.setAttribute(
         "y",
         point.y - 10
     );
 
+
     number.setAttribute(
         "text-anchor",
         "end"
     );
 
+
     number.classList.add(
         "point-number"
     );
+
 
     number.textContent =
         index + 1;
@@ -330,18 +444,28 @@ function createPoint(point, index) {
     // ADD TO GROUP
     // ======================================
 
-    group.appendChild(hitArea);
+    group.appendChild(
+        hitArea
+    );
 
-    group.appendChild(circle);
 
-    group.appendChild(number);
+    group.appendChild(
+        circle
+    );
+
+
+    group.appendChild(
+        number
+    );
 
 
     // ======================================
     // ADD TO SVG
     // ======================================
 
-    svg.appendChild(group);
+    svg.appendChild(
+        group
+    );
 
 
     // ======================================
@@ -392,7 +516,9 @@ function createPoint(point, index) {
 function handlePointClick(index) {
 
     if (levelCompleted) {
+
         return;
+
     }
 
 
@@ -400,6 +526,7 @@ function handlePointClick(index) {
         "Clicked point:",
         index + 1
     );
+
 
     console.log(
         "Expected point:",
@@ -416,8 +543,11 @@ function handlePointClick(index) {
     ) {
 
         // Play click sound
+
         clickSound.currentTime = 0;
+
         clickSound.play();
+
 
         // If this is not the first point,
         // connect it to the previous point.
@@ -449,6 +579,7 @@ function handlePointClick(index) {
         const level =
             levels[currentLevelIndex];
 
+
         if (
             currentPointIndex >=
             level.points.length
@@ -460,12 +591,13 @@ function handlePointClick(index) {
 
     }
 
+
     // --------------------------------------
     // Wrong point
     // --------------------------------------
 
     else {
-        // 错误音效
+
         // wrongSound.currentTime = 0;
         // wrongSound.play();
 
@@ -487,6 +619,7 @@ function drawLine(index1, index2) {
 
     const point1 =
         level.points[index1];
+
 
     const point2 =
         level.points[index2];
@@ -516,15 +649,18 @@ function drawLine(index1, index2) {
         point1.x
     );
 
+
     line.setAttribute(
         "y1",
         point1.y
     );
 
+
     line.setAttribute(
         "x2",
         point2.x
     );
+
 
     line.setAttribute(
         "y2",
@@ -541,15 +677,18 @@ function drawLine(index1, index2) {
         "#4CAF50"
     );
 
+
     line.setAttribute(
         "stroke-width",
         "5"
     );
 
+
     line.setAttribute(
         "stroke-linecap",
         "round"
     );
+
 
     line.setAttribute(
         "fill",
@@ -618,13 +757,16 @@ function updatePointAppearance() {
 
 
             if (!circle) {
+
                 return;
+
             }
 
 
             circle.classList.remove(
                 "completed"
             );
+
 
             circle.classList.remove(
                 "current"
@@ -676,7 +818,9 @@ function wrongPointFeedback(index) {
 
 
     if (!group) {
+
         return;
+
     }
 
 
@@ -687,12 +831,15 @@ function wrongPointFeedback(index) {
 
 
     if (!circle) {
+
         return;
+
     }
 
 
     circle.animate(
         [
+
             {
                 transform:
                     "translateX(0)"
@@ -717,7 +864,9 @@ function wrongPointFeedback(index) {
                 transform:
                     "translateX(0)"
             }
+
         ],
+
         {
             duration: 250
         }
@@ -733,19 +882,27 @@ function completeLevel() {
 
     levelCompleted = true;
 
-    // 完成音效
+
+    // --------------------------------------
+    // Complete sound
+    // --------------------------------------
+
     // completeSound.currentTime = 0;
     // completeSound.play();
 
 
+    // --------------------------------------
     // Reveal image
+    // --------------------------------------
 
     backgroundImage.classList.add(
         "revealed"
     );
 
 
+    // --------------------------------------
     // Stop pulse animation
+    // --------------------------------------
 
     svg
         .querySelectorAll(
@@ -758,6 +915,7 @@ function completeLevel() {
                     "current"
                 );
 
+
                 circle.classList.add(
                     "completed"
                 );
@@ -766,8 +924,32 @@ function completeLevel() {
         );
 
 
+    // ======================================
+    // SHOW COMPLETION DIALOG
+    // ======================================
+
+    const level =
+        levels[currentLevelIndex];
+
+
+    // Get custom message from level.js
+
+    const completionMessage =
+        level.completionMessage ||
+        "🎉 Level complete!";
+
+
+    levelDialogText.textContent =
+        completionMessage;
+
+
+    levelDialog.classList.remove(
+        "hidden"
+    );
+
+
     // --------------------------------------
-    // Message
+    // Last level / next level
     // --------------------------------------
 
     if (
@@ -791,6 +973,22 @@ function completeLevel() {
 
     }
 }
+
+
+// ==========================================
+// CLOSE LEVEL DIALOG
+// ==========================================
+
+levelDialogButton.addEventListener(
+    "click",
+    function() {
+
+        levelDialog.classList.add(
+            "hidden"
+        );
+
+    }
+);
 
 
 // ==========================================
