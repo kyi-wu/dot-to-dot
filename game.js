@@ -9,7 +9,7 @@ const GAME_CONFIG = {
 
 
 // ==========================================
-// DOM ELEMENTS
+// DOM ELEMENTS 主要元素
 // ==========================================
 
 const svg = document.getElementById("game-svg");
@@ -32,8 +32,15 @@ const nextButton =
 const messageElement =
     document.getElementById("message");
 
+//声效 
 const clickSound = new Audio("sounds/click_sound.mp3");
 clickSound.volume = 0.5;
+
+// const wrongSound = new Audio("sounds/wrong.mp3");
+// clickSound.volume = 0.5;
+
+// const completeSound = new Audio("sounds/complete.mp3");
+// clickSound.volume = 0.5;
 
 
 // ==========================================
@@ -429,6 +436,9 @@ function handlePointClick(index) {
     // --------------------------------------
 
     else {
+        // 错误音效
+        // wrongSound.currentTime = 0;
+        // wrongSound.play();
 
         wrongPointFeedback(index);
 
@@ -693,6 +703,10 @@ function wrongPointFeedback(index) {
 function completeLevel() {
 
     levelCompleted = true;
+
+    // 完成音效
+    // completeSound.currentTime = 0;
+    // completeSound.play();
 
 
     // Reveal image
