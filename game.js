@@ -236,7 +236,7 @@ function createPoint(point, index) {
 
 
     // ======================================
-    // NUMBER
+    // NUMBER *数字位置
     // ======================================
 
     const number =
@@ -245,19 +245,38 @@ function createPoint(point, index) {
             "text"
         );
 
+
+    // 数字在中心
+    // number.setAttribute(
+    //     "x",
+    //     point.x
+    // );
+
+    // number.setAttribute(
+    //     "y",
+    //     point.y + 5
+    // );
+
+    // number.setAttribute(
+    //     "text-anchor",
+    //     "middle"
+    // );
+
+
+    // 数字在左上角
     number.setAttribute(
-        "x",
-        point.x
+    "x",
+    point.x - 10
     );
 
     number.setAttribute(
         "y",
-        point.y + 5
+        point.y - 10
     );
 
     number.setAttribute(
         "text-anchor",
-        "middle"
+        "end"
     );
 
     number.classList.add(
