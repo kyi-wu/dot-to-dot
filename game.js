@@ -32,6 +32,9 @@ const nextButton =
 const messageElement =
     document.getElementById("message");
 
+const clickSound = new Audio("sounds/click_sound.mp3");
+clickSound.volume = 0.5;
+
 
 // ==========================================
 // SVG NAMESPACE
@@ -369,12 +372,16 @@ function handlePointClick(index) {
 
 
     // --------------------------------------
-    // Correct point
+    // Correct point 正确点击
     // --------------------------------------
 
     if (
         index === currentPointIndex
     ) {
+
+        // Play click sound
+        clickSound.currentTime = 0;
+        clickSound.play();
 
         // If this is not the first point,
         // connect it to the previous point.
