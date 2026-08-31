@@ -932,20 +932,20 @@ function completeLevel() {
         levels[currentLevelIndex];
 
 
-    // Get custom message from level.js
+    // // Get custom message from level.js
 
-    const completionMessage =
-        level.completionMessage ||
-        "🎉 Level complete!";
-
-
-    levelDialogText.textContent =
-        completionMessage;
+    // const completionMessage =
+    //     level.completionMessage ||
+    //     "🎉 Level complete!";
 
 
-    levelDialog.classList.remove(
-        "hidden"
-    );
+    // levelDialogText.textContent =
+    //     completionMessage;
+
+
+    // levelDialog.classList.remove(
+    //     "hidden"
+    // );
 
 
     // --------------------------------------
