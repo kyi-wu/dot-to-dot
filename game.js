@@ -102,9 +102,6 @@ document.addEventListener(
 // LEVEL COMPLETION DIALOG
 // ==========================================
 
-// Create dialog automatically.
-// No HTML changes are required.
-
 const levelDialog =
     document.createElement("div");
 
@@ -157,6 +154,166 @@ document.body.appendChild(
     levelDialog
 );
 
+
+// ==========================================
+// LEVEL COMPLETION DIALOG - Text
+// ==========================================
+const LEVEL_DIALOG_CONFIG = {
+
+    1: {
+        x: 1543,
+        y: 219,
+        text: "What a lovely picture!"
+    },
+
+    2: {
+        x: 1500,
+        y: 350,
+        text: "Look at that!"
+    },
+
+    3: {
+        x: 500,
+        y: 800,
+        text: "Almost there!"
+    },
+
+    4: {
+        x: 960,
+        y: 500,
+        text: "You did it!"
+    }
+
+};
+
+// ==========================================
+// LEVEL COMPLETION DIALOG - txt appearing style
+// ==========================================
+
+function showLevelDialog(levelNumber) {
+
+    const config =
+        LEVEL_DIALOG_CONFIG[levelNumber];
+
+    if (!config) {
+        return;
+    }
+
+
+    // Reset dialog state
+
+    levelDialog.classList.remove(
+        "show",
+        "button-visible"
+    );
+
+    levelDialog.classList.remove(
+        "hidden"
+    );
+
+
+    levelDialogText.textContent = "";
+
+
+    // Hide button initially
+
+    levelDialogButton.style.opacity = "0";
+
+    levelDialogButton.style.pointerEvents =
+        "none";
+
+
+    // -------------------------
+    // Position
+    // -------------------------
+
+    const svg =
+        document.getElementById("game-svg");
+
+    const point =
+        svg.createSVGPoint();
+
+    point.x = config.x;
+    point.y = config.y;
+
+
+    const screenPoint =
+        point.matrixTransform(
+            svg.getScreenCTM()
+        );
+
+
+    levelDialogBox.style.left =
+        `${screenPoint.x}px`;
+
+    levelDialogBox.style.top =
+        `${screenPoint.y}px`;
+
+
+    // -------------------------
+    // Wait 1 second
+    // -------------------------
+
+    setTimeout(() => {
+
+        levelDialog.classList.add(
+            "show"
+        );
+
+
+        // -------------------------
+        // Typewriter effect
+        // -------------------------
+
+        typeText(
+            config.text,
+            80
+        );
+
+    }, 1000);
+}
+
+function typeText(text, speed = 80) {
+
+    let index = 0;
+
+    levelDialogText.textContent = "";
+
+
+    function typeNextCharacter() {
+
+        if (index >= text.length) {
+
+            // Text finished
+            showContinueButton();
+
+            return;
+        }
+
+
+        levelDialogText.textContent +=
+            text[index];
+
+        index++;
+
+
+        setTimeout(
+            typeNextCharacter,
+            speed
+        );
+    }
+
+
+    typeNextCharacter();
+}
+
+function showContinueButton() {
+
+    levelDialog.classList.add(
+        "button-visible"
+    );
+
+}
 
 // ==========================================
 // SVG NAMESPACE
@@ -931,6 +1088,37 @@ function completeLevel() {
     const level =
         levels[currentLevelIndex];
 
+    // Show custom completion text
+
+    showLevelDialog(
+        currentLevelIndex + 1
+    );
+
+    // --------------------------------------
+    // Last level / next level
+    // --------------------------------------
+
+    if (
+        currentLevelIndex ===
+        levels.length - 1
+    ) {
+
+        messageElement.textContent =
+            "🎉 You completed all levels!";
+
+    }
+
+    else {
+
+        messageElement.textContent =
+            "🎉 Level complete!";
+
+        nextButton.classList.remove(
+            "hidden"
+        );
+
+    }
+
 
     // // Get custom message from level.js
 
@@ -981,11 +1169,23 @@ function completeLevel() {
 
 levelDialogButton.addEventListener(
     "click",
-    function() {
+    () => {
 
         levelDialog.classList.add(
             "hidden"
         );
+
+        levelDialog.classList.remove(
+            "show",
+            "button-visible"
+        );
+
+
+        // Trigger existing next-level logic
+
+        document
+            .getElementById("next-button")
+            .click();
 
     }
 );

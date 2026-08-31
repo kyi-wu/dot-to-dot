@@ -336,24 +336,20 @@ button.hidden {
 /* -------------------------
    Level Completion Dialog （对话框）
 ------------------------- */
+/* -------------------------
+   Level Completion Dialog
+------------------------- */
 
 .level-dialog {
     position: fixed;
 
     inset: 0;
 
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
 
     z-index: 1000;
 
     opacity: 1;
-
-    transition: opacity 0.3s ease;
 }
 
 
@@ -361,51 +357,128 @@ button.hidden {
     display: none;
 }
 
-/* 对话框样式 */
+
+/* -------------------------
+   Dialog content
+------------------------- */
+
 .level-dialog-box {
 
-    width: min(500px, 85vw);
+    position: absolute;
 
-    padding: 30px;
-
-    background: #fff;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.2);
+    transform: translate(-50%, -50%);
 
     text-align: center;
 
-    animation: dialog-pop 0.3s ease-out;
+    pointer-events: none;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
 }
 
 
-#level-dialog-text {
+/* -------------------------
+   Dialog text
+------------------------- */
 
-    margin-bottom: 25px;
+.level-dialog-text {
 
-    font-family: "Reenie Beanie", cursive;
+    margin: 0;
 
-    font-size: 24px;
+    font-family:
+        "Reenie Beanie",
+        cursive;
 
-    line-height: 1.4;
+    font-size: 42px;
+
+    line-height: 1.2;
 
     color: #333;
 
+    white-space: nowrap;
+
+    opacity: 0;
+
+    transform: translateY(15px);
+
+    transition:
+        opacity 1s ease,
+        transform 1s ease;
 }
 
 
-@keyframes dialog-pop {
+/* Text starts appearing */
 
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
+.level-dialog.show .level-dialog-text {
 
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    opacity: 1;
 
+    transform: translateY(0);
+
+}
+
+
+/* -------------------------
+   Continue button
+------------------------- */
+
+.level-dialog-button {
+
+    margin-top: 20px;
+
+    padding: 8px 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #333;
+
+    color: white;
+
+    font-family:
+        "Reenie Beanie",
+        cursive;
+
+    font-size: 24px;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    transform: translateY(10px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+
+/* Show Continue button */
+
+.level-dialog.button-visible
+.level-dialog-button {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+
+.level-dialog-button:hover {
+
+    background: #555;
+}
+
+
+.level-dialog-button:active {
+
+    transform: scale(0.96);
 }
