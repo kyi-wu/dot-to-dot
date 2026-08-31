@@ -150,9 +150,9 @@ levelDialog.appendChild(
     levelDialogBox
 );
 
-document.body.appendChild(
-    levelDialog
-);
+document
+    .getElementById("game-board")
+    .appendChild(levelDialog);
 
 
 // ==========================================
@@ -161,26 +161,34 @@ document.body.appendChild(
 const LEVEL_DIALOG_CONFIG = {
 
     1: {
-        x: 1543,
-        y: 219,
-        text: "What a lovely picture!"
+        x1: 1170,
+        y1: 100,
+        x2: 1850,
+        y2: 450,
+        text: "A Brighton summer, salt in the breeze, melting softly into sunlight."
     },
 
     2: {
-        x: 1500,
-        y: 350,
+        x1: 1300,
+        y1: 100,
+        x2: 1850,
+        y2: 350,
         text: "Look at that!"
     },
 
     3: {
-        x: 500,
-        y: 800,
+        x1: 1300,
+        y1: 100,
+        x2: 1850,
+        y2: 350,
         text: "Almost there!"
     },
 
     4: {
-        x: 960,
-        y: 500,
+        x1: 1300,
+        y1: 100,
+        x2: 1850,
+        y2: 350,
         text: "You did it!"
     }
 
@@ -200,7 +208,13 @@ function showLevelDialog(levelNumber) {
     }
 
 
-    // Reset dialog state
+    // Clear previous timers
+
+    clearTimeout(dialogTimer);
+    clearTimeout(typingTimer);
+
+
+    // Reset dialog
 
     levelDialog.classList.remove(
         "show",
@@ -215,55 +229,72 @@ function showLevelDialog(levelNumber) {
     levelDialogText.textContent = "";
 
 
-    // Hide button initially
-
-    levelDialogButton.style.opacity = "0";
+    levelDialogButton.style.opacity =
+        "0";
 
     levelDialogButton.style.pointerEvents =
         "none";
 
 
-    // -------------------------
-    // Position
-    // -------------------------
+    // ======================================
+    // Convert four game coordinates
+    // to screen coordinates
+    // ======================================
 
-    const svg =
-        document.getElementById("game-svg");
-
-    const point =
+    const topLeft =
         svg.createSVGPoint();
 
-    point.x = config.x;
-    point.y = config.y;
+    topLeft.x = config.x1;
+    topLeft.y = config.y1;
 
 
-    const screenPoint =
-        point.matrixTransform(
+    const bottomRight =
+        svg.createSVGPoint();
+
+    bottomRight.x = config.x2;
+    bottomRight.y = config.y2;
+
+
+    const screenTopLeft =
+        topLeft.matrixTransform(
             svg.getScreenCTM()
         );
 
 
+    const screenBottomRight =
+        bottomRight.matrixTransform(
+            svg.getScreenCTM()
+        );
+
+
+    // ======================================
+    // Set dialog position and size
+    // ======================================
+
     levelDialogBox.style.left =
-        `${screenPoint.x}px`;
+        `${screenTopLeft.x}px`;
 
     levelDialogBox.style.top =
-        `${screenPoint.y}px`;
+        `${screenTopLeft.y}px`;
 
 
-    // -------------------------
+    levelDialogBox.style.width =
+        `${screenBottomRight.x - screenTopLeft.x}px`;
+
+    levelDialogBox.style.height =
+        `${screenBottomRight.y - screenTopLeft.y}px`;
+
+
+    // ======================================
     // Wait 1 second
-    // -------------------------
+    // ======================================
 
-    setTimeout(() => {
+    dialogTimer = setTimeout(() => {
 
         levelDialog.classList.add(
             "show"
         );
 
-
-        // -------------------------
-        // Typewriter effect
-        // -------------------------
 
         typeText(
             config.text,
@@ -273,6 +304,7 @@ function showLevelDialog(levelNumber) {
     }, 1000);
 }
 
+// text appearing char by char
 function typeText(text, speed = 80) {
 
     let index = 0;
@@ -284,7 +316,6 @@ function typeText(text, speed = 80) {
 
         if (index >= text.length) {
 
-            // Text finished
             showContinueButton();
 
             return;
@@ -297,7 +328,7 @@ function typeText(text, speed = 80) {
         index++;
 
 
-        setTimeout(
+        typingTimer = setTimeout(
             typeNextCharacter,
             speed
         );
@@ -306,6 +337,7 @@ function typeText(text, speed = 80) {
 
     typeNextCharacter();
 }
+
 
 function showContinueButton() {
 
@@ -334,6 +366,13 @@ let currentPointIndex = 0;
 let levelCompleted = false;
 
 let numbersVisible = true;
+
+// ==========================================
+// DIALOG TIMERS
+// ==========================================
+// Dialog timers
+let dialogTimer = null;
+let typingTimer = null;
 
 
 // ==========================================
