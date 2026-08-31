@@ -2,8 +2,8 @@
 // CONFIG
 // ==========================================
 
-const SVG_WIDTH = 800;
-const SVG_HEIGHT = 600;
+const SVG_WIDTH = 1920;
+const SVG_HEIGHT = 1080;
 
 const SVG_NS =
     "http://www.w3.org/2000/svg";
