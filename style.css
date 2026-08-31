@@ -229,8 +229,8 @@ body {
 ------------------------- */
 
 .point-number {
-    font-family: "Patrick Hand", cursive;
-    font-size: 18px;
+    font-family: "Reenie Beanie", cursive;
+    font-size: 33px;
     font-weight: 400;
     fill: #333;
     pointer-events: none;
@@ -385,9 +385,7 @@ button.hidden {
 
     margin-bottom: 25px;
 
-    font-family:
-        "Patrick Hand",
-        cursive;
+    font-family: "Reenie Beanie", cursive;
 
     font-size: 24px;
 
