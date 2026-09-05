@@ -1184,15 +1184,15 @@ function completeLevel() {
         levels.length - 1
     ) {
 
-        messageElement.textContent =
-            "🎉 You completed all levels!";
+        // messageElement.textContent =
+        //     "🎉 You completed all levels!";
 
     }
 
     else {
 
-        messageElement.textContent =
-            "🎉 Level complete!";
+        // messageElement.textContent =
+        //     "🎉 Level complete!";
 
         nextButton.classList.remove(
             "hidden"
