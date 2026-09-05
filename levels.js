@@ -10,6 +10,23 @@ const levels = [
     showNumbers: true,
     completionMessage:
                 "level 1 completes 🐱",
+            // -------------------------------------
+        // LEVEL COLORS
+        // -------------------------------------
+        colors: {
+            point: "#FFFFFF",
+            pointStroke: "#333333",
+
+            pointHover: "#EEEEEE",
+
+            completedPoint: "#4cafad",
+            completedPointStroke: "#4cafad",
+
+            line: "#4cafad",
+
+            number: "#333333"
+        },
+
     points: [
             { x: 772, y: 640 },
             { x: 796, y: 914 },
@@ -34,6 +51,24 @@ const levels = [
                 "level 2 completes 🐱",
 
         showNumbers: true,
+
+                // -------------------------------------
+        // LEVEL COLORS
+        // -------------------------------------
+        colors: {
+            point: "#FFFFFF",
+            pointStroke: "#333333",
+
+            pointHover: "#EEEEEE",
+
+            completedPoint: "#4CAF50",
+            completedPointStroke: "#388E3C",
+
+            line: "#4CAF50",
+
+            number: "#333333"
+        },
+
 
         points: [
 
@@ -63,6 +98,23 @@ const levels = [
 
         showNumbers: true,
 
+                // -------------------------------------
+        // LEVEL COLORS
+        // -------------------------------------
+        colors: {
+            point: "#FFFFFF",
+            pointStroke: "#333333",
+
+            pointHover: "#EEEEEE",
+
+            completedPoint: "#4CAF50",
+            completedPointStroke: "#388E3C",
+
+            line: "#4CAF50",
+
+            number: "#333333"
+        },
+
         points: [
 
             { x: 400, y: 100 },
@@ -90,6 +142,23 @@ const levels = [
                 "level 4 completes 🐱",
 
         showNumbers: true,
+
+        // -------------------------------------
+        // LEVEL COLORS
+        // -------------------------------------
+        colors: {
+            point: "#FFFFFF",
+            pointStroke: "#333333",
+
+            pointHover: "#EEEEEE",
+
+            completedPoint: "#4CAF50",
+            completedPointStroke: "#388E3C",
+
+            line: "#4CAF50",
+
+            number: "#333333"
+        },
 
         points: [
 

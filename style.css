@@ -133,8 +133,7 @@ body {
 ------------------------- */
 
 .connection-line {
-
-    stroke: #4caf50;
+    stroke: var(--line-color, #4caf89);
 
     stroke-width: 5;
 
@@ -147,64 +146,75 @@ body {
     animation: draw-line 0.3s ease-out;
 }
 
-
 @keyframes draw-line {
 
     from {
+
         stroke-dasharray: 1000;
+
         stroke-dashoffset: 1000;
+
     }
 
     to {
+
         stroke-dashoffset: 0;
+
     }
 
 }
-
 
 /* -------------------------
    Points
 ------------------------- */
 
 .point-group {
+
     cursor: pointer;
+
 }
 
 
 .point-circle {
 
-    fill: white;
+    fill: var(--point-color, white);
 
-    stroke: #333;
+    stroke: var(--point-stroke-color, #333);
 
     stroke-width: 3;
 
     transition:
         transform 0.15s,
         fill 0.15s;
+
 }
 
 
 .point-group:hover .point-circle {
 
-    fill: #eeeeee;
+    fill: var(--point-hover-color, #eeeeee);
 
     transform: scale(1.15);
+
 }
 
 
 .point-circle.completed {
 
-    fill: #4caf50;
+    fill: var(--completed-point-color, #4caf50);
 
-    stroke: #388e3c;
+    stroke: var(
+        --completed-point-stroke-color,
+        #388e3c
+    );
+
 }
 
 
-.point-circle.current {
+/* .point-circle.current {
 
     animation: pulse 1s infinite;
-}
+} */
 
 
 @keyframes pulse {
@@ -229,14 +239,20 @@ body {
 ------------------------- */
 
 .point-number {
-    font-family: "Reenie Beanie", cursive;
-    font-size: 33px;
-    font-weight: 400;
-    fill: #333;
-    pointer-events: none;
-    user-select: none;
-}
 
+    font-family: "Reenie Beanie", cursive;
+
+    font-size: 33px;
+
+    font-weight: 400;
+
+    fill: var(--number-color, #333);
+
+    pointer-events: none;
+
+    user-select: none;
+
+}
 
 /* -------------------------
    Controls

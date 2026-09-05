@@ -8,6 +8,27 @@ const GAME_CONFIG = {
     allowToggleNumbers: true
 };
 
+// ==========================================
+// DEFAULT LEVEL COLORS
+// ==========================================
+
+const DEFAULT_LEVEL_COLORS = {
+
+    point: "#FFFFFF",
+
+    pointStroke: "#333333",
+
+    pointHover: "#EEEEEE",
+
+    completedPoint: "#4CAF50",
+
+    completedPointStroke: "#388E3C",
+
+    line: "#4CAF89",
+
+    number: "#333333"
+
+};
 
 // ==========================================
 // DOM ELEMENTS 主要元素
@@ -376,6 +397,64 @@ let typingTimer = null;
 
 
 // ==========================================
+// APPLY LEVEL COLORS
+// ==========================================
+
+function applyLevelColors(level) {
+
+    const colors = {
+
+        ...DEFAULT_LEVEL_COLORS,
+
+        ...(level.colors || {})
+
+    };
+
+
+    svg.style.setProperty(
+        "--point-color",
+        colors.point
+    );
+
+
+    svg.style.setProperty(
+        "--point-stroke-color",
+        colors.pointStroke
+    );
+
+
+    svg.style.setProperty(
+        "--point-hover-color",
+        colors.pointHover
+    );
+
+
+    svg.style.setProperty(
+        "--completed-point-color",
+        colors.completedPoint
+    );
+
+
+    svg.style.setProperty(
+        "--completed-point-stroke-color",
+        colors.completedPointStroke
+    );
+
+
+    svg.style.setProperty(
+        "--line-color",
+        colors.line
+    );
+
+
+    svg.style.setProperty(
+        "--number-color",
+        colors.number
+    );
+
+}
+
+// ==========================================
 // START
 // ==========================================
 
@@ -390,7 +469,11 @@ function loadLevel(levelIndex) {
 
     const level =
         levels[levelIndex];
-
+    
+    // --------------------------------------
+    // Apply this level's colors
+    // --------------------------------------
+    applyLevelColors(level);
 
     currentPointIndex = 0;
 
@@ -868,10 +951,10 @@ function drawLine(index1, index2) {
     // LINE STYLE
     // ======================================
 
-    line.setAttribute(
-        "stroke",
-        "#4CAF50"
-    );
+    // line.setAttribute(
+    //     "stroke",
+    //     "#4CAF50"
+    // );
 
 
     line.setAttribute(
