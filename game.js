@@ -407,7 +407,7 @@ function eraseTextRandomly(speed = 100) {
 
             return;
         }
-        
+
         // Pick a random character
         const randomIndex =
             Math.floor(
@@ -1239,6 +1239,33 @@ function wrongPointFeedback(index) {
 
 
 // ==========================================
+// FADE OUT COMPLETED GAME ELEMENTS
+// ==========================================
+
+function fadeOutCompletedElements() {
+
+    // Fade out all connection lines
+    svg
+        .querySelectorAll(".connection-line")
+        .forEach(line => {
+
+            line.classList.add("fade-out");
+
+        });
+
+
+    // Fade out all points
+    svg
+        .querySelectorAll(".point-group")
+        .forEach(group => {
+
+            group.classList.add("fade-out");
+
+        });
+}
+
+
+// ==========================================
 // COMPLETE LEVEL
 // ==========================================
 
@@ -1262,6 +1289,12 @@ function completeLevel() {
     backgroundImage.classList.add(
         "revealed"
     );
+
+    // --------------------------------------
+    // Fade out completed points and lines
+    // --------------------------------------
+
+    fadeOutCompletedElements();
 
     // --------------------------------------
     // Start random text disappearance

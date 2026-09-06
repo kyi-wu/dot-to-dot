@@ -132,6 +132,26 @@ body {
 }
 
 
+/* ==========================================
+   COMPLETED GAME ELEMENTS FADE OUT
+   ========================================== */
+
+.connection-line.fade-out,
+.point-group.fade-out {
+    animation: gameElementFadeOut 3s ease forwards;
+}
+
+@keyframes gameElementFadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+
 /* -------------------------
    Connection lines
 ------------------------- */
