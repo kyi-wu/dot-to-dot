@@ -311,7 +311,7 @@ function showLevelDialog(levelNumber) {
             "show"
         );
 
-        // Type text character by character
+        // text appear
         typeText(
                 config.text,
                 80
@@ -605,6 +605,13 @@ function loadLevel(levelIndex) {
         "hidden"
     );
 
+    // ==============================
+    // SET BACKGROUND IMAGE
+    // ==============================
+
+    // ⭐ 每一关开始时，强制隐藏背景图
+    backgroundImage.classList.remove("revealed");
+    backgroundImage.setAttribute("href", level.image);
 
     // --------------------------------------
     // Reset level dialog
@@ -624,20 +631,6 @@ function loadLevel(levelIndex) {
     );
 
     levelDialogText.textContent = "";
-
-    // --------------------------------------
-    // Background
-    // --------------------------------------
-
-    backgroundImage.setAttribute(
-        "href",
-        level.image
-    );
-
-
-    backgroundImage.classList.remove(
-        "revealed"
-    );
 
 
     // --------------------------------------
