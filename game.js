@@ -324,33 +324,38 @@ function showLevelDialog(levelNumber) {
 // ==========================================
 // TEXT APPEARING CHARACTER BY CHARACTER
 // ==========================================
+function typeText(text) {
 
-function typeText(text, speed = 80) {
+    // Show the entire text immediately
+    levelDialogText.textContent = text;
 
-    let index = 0;
-
-    levelDialogText.textContent = "";
-
-    function typeNextCharacter() {
-
-        if (index >= text.length) {
-
-            return;
-        }
-
-        levelDialogText.textContent +=
-            text[index];
-
-        index++;
-
-        typingTimer = setTimeout(
-            typeNextCharacter,
-            speed
-        );
-    }
-
-    typeNextCharacter();
 }
+// function typeText(text, speed = 80) {
+
+//     let index = 0;
+
+//     levelDialogText.textContent = "";
+
+//     function typeNextCharacter() {
+
+//         if (index >= text.length) {
+
+//             return;
+//         }
+
+//         levelDialogText.textContent +=
+//             text[index];
+
+//         index++;
+
+//         typingTimer = setTimeout(
+//             typeNextCharacter,
+//             speed
+//         );
+//     }
+
+//     typeNextCharacter();
+// }
 
 
 function showContinueButton() {

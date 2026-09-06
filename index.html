@@ -12,8 +12,7 @@
     <!-- 字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Handlee&family=Indie+Flower&family=Reenie+Beanie&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -22,10 +21,6 @@
 
         <header class="game-header">
             <!-- <h1>Connect the Dots</h1> -->
-
-            <div class="level-info">
-                Level <span id="currentLevel">1</span> / 4
-            </div>
         </header>
 
 
@@ -59,8 +54,16 @@
 
         </main>
 
-
+        <div
+            id="message"
+            class="message"
+        ></div>
+        
         <div class="controls">
+
+            <div class="level-info">
+                Level <span id="currentLevel">1</span> / 4      
+            </div>
 
             <button id="restart-button">
                 Restart
