@@ -182,10 +182,10 @@ document
 const LEVEL_DIALOG_CONFIG = {
 
     1: {
-        x1: 1170,
-        y1: 100,
-        x2: 1850,
-        y2: 450,
+        x1: 1071,
+        y1: 646,
+        x2: 1810,
+        y2: 969,
         text: "A Brighton summer, salt in the breeze, melting softly into sunlight."
     },
 
@@ -313,12 +313,12 @@ function showLevelDialog(levelNumber) {
 
         // Type text character by character
         typeText(
-            config.text,
-            80
-        );
+                config.text,
+                80
+            );
 
-    }, 1000);
-}
+        }, 0);
+    }
 
 // text appearing char by char
 // ==========================================
@@ -366,79 +366,116 @@ function showContinueButton() {
 
 }
 
+
+
 // ==========================================
-// TEXT DISAPPEARING RANDOMLY
+// TEXT DISAPPEARING - SLOW FADE OUT
 // ==========================================
 
-function eraseTextRandomly(speed = 100) {
+// ==========================================
+// RANDOM LETTER FADE OUT
+// ==========================================
+function fadeTextRandomly(speed) {
 
     clearTimeout(eraseTimer);
 
     const text =
         levelDialogText.textContent;
 
-    // Convert text into an array of characters
-    let characters =
-        Array.from(text);
+    // Clear existing text
+    levelDialogText.innerHTML = "";
 
-    function eraseNextCharacter() {
+    // Preserve spaces and line breaks
+    levelDialogText.style.whiteSpace =
+        "pre-wrap";
 
-        if (characters.length === 0) {
+    // Create a span for every character
+    const characters =
+        Array.from(text).map(char => {
 
-            levelDialogText.textContent = "";
+            const span =
+                document.createElement("span");
 
-            setTimeout(() => {
+            span.textContent = char;
 
-                levelDialog.classList.remove(
-                    "show"
-                );
+            // Keep original position
+            span.style.display = "inline";
 
-                levelDialog.classList.add(
-                    "hidden"
-                );
+            // Start visible
+            span.style.opacity = "1";
 
-                // Show Next button after text disappears
-                if (
-                    currentLevelIndex <
-                    levels.length - 1
-                ) {
+            // char fade 
+            span.style.transition =
+                "opacity 2.5s ease";
 
-                    nextButton.classList.remove(
-                        "hidden"
-                    );
-                }
+            levelDialogText.appendChild(
+                span
+            );
 
-            }, 300);
+            return {
+                char,
+                span
+            };
+        });
+
+
+    // --------------------------------------
+    // Only letters / non-space characters
+    // --------------------------------------
+
+    const availableCharacters =
+        characters.filter(
+            item => item.char.trim() !== ""
+        );
+
+
+    // --------------------------------------
+    // Random order
+    // --------------------------------------
+
+    const shuffled =
+        [...availableCharacters]
+            .sort(
+                () => Math.random() - 0.5
+            );
+
+
+    let index = 0;
+
+
+    // --------------------------------------
+    // Fade characters randomly
+    // --------------------------------------
+
+    function fadeNextCharacter() {
+
+        if (
+            index >= shuffled.length
+        ) {
 
             return;
         }
 
-        // Pick a random character
-        const randomIndex =
-            Math.floor(
-                Math.random() * characters.length
+
+        // Fade this character
+        shuffled[index].span.style.opacity =
+            "0";
+
+
+        index++;
+
+
+        // Pick another random character
+        eraseTimer =
+            setTimeout(
+                fadeNextCharacter,
+                speed
             );
-
-        // Remove that character
-        characters.splice(
-            randomIndex,
-            1
-        );
-
-        // Update displayed text
-        levelDialogText.textContent =
-            characters.join("");
-
-        // Continue
-        eraseTimer = setTimeout(
-            eraseNextCharacter,
-            speed
-        );
     }
 
-    eraseNextCharacter();
-}
 
+    fadeNextCharacter();
+}
 
 // ==========================================
 // SVG NAMESPACE
@@ -911,19 +948,19 @@ function handlePointClick(index) {
         index === currentPointIndex
     ) {
 
+        // First point clicked
+        if (currentPointIndex === 0) {
+
+            fadeTextRandomly(200);
+
+        }
+
         // Play click sound
-
         clickSound.currentTime = 0;
-
         clickSound.play();
 
-
-        // If this is not the first point,
-        // connect it to the previous point.
-
-        if (
-            currentPointIndex > 0
-        ) {
+        // Connect to previous point
+        if (currentPointIndex > 0) {
 
             drawLine(
                 currentPointIndex - 1,
@@ -932,22 +969,13 @@ function handlePointClick(index) {
 
         }
 
-
-        // Move to next point
-
         currentPointIndex++;
-
 
         updatePointAppearance();
 
-
-        // ----------------------------------
         // Check completion
-        // ----------------------------------
-
         const level =
             levels[currentLevelIndex];
-
 
         if (
             currentPointIndex >=
@@ -957,7 +985,6 @@ function handlePointClick(index) {
             completeLevel();
 
         }
-
     }
 
 
@@ -1300,12 +1327,6 @@ function completeLevel() {
     // --------------------------------------
 
     fadeOutCompletedElements();
-
-    // --------------------------------------
-    // Start random text disappearance
-    // --------------------------------------
-
-    eraseTextRandomly(100);
 
 
     // --------------------------------------

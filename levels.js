@@ -46,13 +46,11 @@ const levels = [
     // =====================================
 
     {
-        image: "images/level2.png",
-        completionMessage:
-                "level 2 completes 🐱",
-
+        image: "images/level1.png",
         showNumbers: true,
-
-                // -------------------------------------
+    completionMessage:
+                "level 1 completes 🐱",
+            // -------------------------------------
         // LEVEL COLORS
         // -------------------------------------
         colors: {
@@ -61,29 +59,26 @@ const levels = [
 
             pointHover: "#EEEEEE",
 
-            completedPoint: "#4CAF50",
-            completedPointStroke: "#388E3C",
+            completedPoint: "#4cafad",
+            completedPointStroke: "#4cafad",
 
-            line: "#4CAF50",
+            line: "#4cafad",
 
             number: "#333333"
         },
 
-
-        points: [
-
-            { x: 150, y: 200 },
-            { x: 200, y: 150 },
-            { x: 280, y: 140 },
-            { x: 350, y: 180 },
-            { x: 400, y: 240 },
-            { x: 380, y: 320 },
-            { x: 320, y: 380 },
-            { x: 240, y: 390 },
-            { x: 180, y: 350 },
-            { x: 140, y: 280 }
-
-        ]
+    points: [
+            { x: 772, y: 640 },
+            { x: 796, y: 914 },
+            { x: 847, y: 957 },
+            { x: 850, y: 1047 },
+            { x: 797, y: 1061 },
+            { x: 941, y: 1063 },
+            { x: 877, y: 1045 },
+            { x: 874, y: 965 },
+            { x: 916, y: 906 },
+            { x: 936, y: 644 }
+    ]
     },
 
 
