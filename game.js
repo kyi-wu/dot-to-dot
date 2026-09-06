@@ -219,6 +219,10 @@ const LEVEL_DIALOG_CONFIG = {
 // LEVEL COMPLETION DIALOG - txt appearing style
 // ==========================================
 
+// ==========================================
+// SHOW LEVEL DIALOG
+// ==========================================
+
 function showLevelDialog(levelNumber) {
 
     const config =
@@ -228,14 +232,17 @@ function showLevelDialog(levelNumber) {
         return;
     }
 
-
+    // --------------------------------------
     // Clear previous timers
+    // --------------------------------------
 
     clearTimeout(dialogTimer);
     clearTimeout(typingTimer);
+    clearTimeout(eraseTimer);
 
-
+    // --------------------------------------
     // Reset dialog
+    // --------------------------------------
 
     levelDialog.classList.remove(
         "show",
@@ -246,21 +253,15 @@ function showLevelDialog(levelNumber) {
         "hidden"
     );
 
-
     levelDialogText.textContent = "";
 
+    levelDialogButton.style.opacity = "0";
+    levelDialogButton.style.pointerEvents = "none";
 
-    levelDialogButton.style.opacity =
-        "0";
-
-    levelDialogButton.style.pointerEvents =
-        "none";
-
-
-    // ======================================
-    // Convert four game coordinates
+    // --------------------------------------
+    // Convert game coordinates
     // to screen coordinates
-    // ======================================
+    // --------------------------------------
 
     const topLeft =
         svg.createSVGPoint();
@@ -268,29 +269,25 @@ function showLevelDialog(levelNumber) {
     topLeft.x = config.x1;
     topLeft.y = config.y1;
 
-
     const bottomRight =
         svg.createSVGPoint();
 
     bottomRight.x = config.x2;
     bottomRight.y = config.y2;
 
-
     const screenTopLeft =
         topLeft.matrixTransform(
             svg.getScreenCTM()
         );
-
 
     const screenBottomRight =
         bottomRight.matrixTransform(
             svg.getScreenCTM()
         );
 
-
-    // ======================================
+    // --------------------------------------
     // Set dialog position and size
-    // ======================================
+    // --------------------------------------
 
     levelDialogBox.style.left =
         `${screenTopLeft.x}px`;
@@ -298,17 +295,15 @@ function showLevelDialog(levelNumber) {
     levelDialogBox.style.top =
         `${screenTopLeft.y}px`;
 
-
     levelDialogBox.style.width =
         `${screenBottomRight.x - screenTopLeft.x}px`;
 
     levelDialogBox.style.height =
         `${screenBottomRight.y - screenTopLeft.y}px`;
 
-
-    // ======================================
-    // Wait 1 second
-    // ======================================
+    // --------------------------------------
+    // Show dialog after 1 second
+    // --------------------------------------
 
     dialogTimer = setTimeout(() => {
 
@@ -316,7 +311,7 @@ function showLevelDialog(levelNumber) {
             "show"
         );
 
-
+        // Type text character by character
         typeText(
             config.text,
             80
@@ -326,35 +321,33 @@ function showLevelDialog(levelNumber) {
 }
 
 // text appearing char by char
+// ==========================================
+// TEXT APPEARING CHARACTER BY CHARACTER
+// ==========================================
+
 function typeText(text, speed = 80) {
 
     let index = 0;
 
     levelDialogText.textContent = "";
 
-
     function typeNextCharacter() {
 
         if (index >= text.length) {
 
-            showContinueButton();
-
             return;
         }
-
 
         levelDialogText.textContent +=
             text[index];
 
         index++;
 
-
         typingTimer = setTimeout(
             typeNextCharacter,
             speed
         );
     }
-
 
     typeNextCharacter();
 }
@@ -367,6 +360,80 @@ function showContinueButton() {
     );
 
 }
+
+// ==========================================
+// TEXT DISAPPEARING RANDOMLY
+// ==========================================
+
+function eraseTextRandomly(speed = 100) {
+
+    clearTimeout(eraseTimer);
+
+    const text =
+        levelDialogText.textContent;
+
+    // Convert text into an array of characters
+    let characters =
+        Array.from(text);
+
+    function eraseNextCharacter() {
+
+        if (characters.length === 0) {
+
+            levelDialogText.textContent = "";
+
+            setTimeout(() => {
+
+                levelDialog.classList.remove(
+                    "show"
+                );
+
+                levelDialog.classList.add(
+                    "hidden"
+                );
+
+                // Show Next button after text disappears
+                if (
+                    currentLevelIndex <
+                    levels.length - 1
+                ) {
+
+                    nextButton.classList.remove(
+                        "hidden"
+                    );
+                }
+
+            }, 300);
+
+            return;
+        }
+        
+        // Pick a random character
+        const randomIndex =
+            Math.floor(
+                Math.random() * characters.length
+            );
+
+        // Remove that character
+        characters.splice(
+            randomIndex,
+            1
+        );
+
+        // Update displayed text
+        levelDialogText.textContent =
+            characters.join("");
+
+        // Continue
+        eraseTimer = setTimeout(
+            eraseNextCharacter,
+            speed
+        );
+    }
+
+    eraseNextCharacter();
+}
+
 
 // ==========================================
 // SVG NAMESPACE
@@ -394,7 +461,7 @@ let numbersVisible = true;
 // Dialog timers
 let dialogTimer = null;
 let typingTimer = null;
-
+let eraseTimer = null;
 
 // ==========================================
 // APPLY LEVEL COLORS
@@ -498,13 +565,23 @@ function loadLevel(levelIndex) {
 
 
     // --------------------------------------
-    // Hide completion dialog
+    // Reset level dialog
     // --------------------------------------
+
+    clearTimeout(dialogTimer);
+    clearTimeout(typingTimer);
+    clearTimeout(eraseTimer);
 
     levelDialog.classList.add(
         "hidden"
     );
 
+    levelDialog.classList.remove(
+        "show",
+        "button-visible"
+    );
+
+    levelDialogText.textContent = "";
 
     // --------------------------------------
     // Background
@@ -555,6 +632,14 @@ function loadLevel(levelIndex) {
     updateNumbersButton();
 
     updatePointAppearance();
+
+    // --------------------------------------
+    // Show level introduction text
+    // --------------------------------------
+
+    showLevelDialog(
+        levelIndex + 1
+    )
 }
 
 
@@ -1178,6 +1263,12 @@ function completeLevel() {
         "revealed"
     );
 
+    // --------------------------------------
+    // Start random text disappearance
+    // --------------------------------------
+
+    eraseTextRandomly(100);
+
 
     // --------------------------------------
     // Stop pulse animation
@@ -1207,14 +1298,14 @@ function completeLevel() {
     // SHOW COMPLETION DIALOG
     // ======================================
 
-    const level =
-        levels[currentLevelIndex];
+    // const level =
+    //     levels[currentLevelIndex];
 
-    // Show custom completion text
+    // // Show custom completion text
 
-    showLevelDialog(
-        currentLevelIndex + 1
-    );
+    // showLevelDialog(
+    //     currentLevelIndex + 1
+    // );
 
     // --------------------------------------
     // Last level / next level
