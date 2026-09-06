@@ -951,7 +951,7 @@ function handlePointClick(index) {
         // First point clicked
         if (currentPointIndex === 0) {
 
-            fadeTextRandomly(200);
+            fadeTextRandomly(140);
 
         }
 
