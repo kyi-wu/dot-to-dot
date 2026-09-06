@@ -57,7 +57,9 @@ body {
 
 
 .level-info {
-    font-size: 18px;
+    font-family: "Indie Flower", cursive;
+    font-weight: bold;
+    font-size: 20px;
     color: #666;
 }
 
@@ -103,8 +105,10 @@ body {
 #game-svg {
     display: block;
 
-    width: 100%;
+    width: 1920;
     height: 100%;
+    margin: auto;
+    background: #fafaf8;
 
     touch-action: manipulation;
 }
