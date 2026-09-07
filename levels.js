@@ -7,6 +7,13 @@ const levels = [
     {
     image: "images/level1.png",
 
+    // Images shown before the player starts connecting
+    beforeConnectionImage:
+        "images/level1_before_connection_image.jpg",
+
+    beforeConnectionText:
+        "images/level1_before_connection_text.png",
+
     showNumbers: true,
             // -------------------------------------
         // LEVEL COLORS
@@ -45,6 +52,13 @@ const levels = [
 
     {
         image: "images/level2.png",
+        // Images shown before the player starts connecting
+        beforeConnectionImage:
+            "images/level2_before_connection_image.jpg",
+
+        beforeConnectionText:
+            "images/level2_before_connection_text.png",
+            
         showNumbers: true,
             // -------------------------------------
         // LEVEL COLORS
@@ -84,6 +98,13 @@ const levels = [
 
     {
         image: "images/level3.png",
+
+        // Images shown before the player starts connecting
+        beforeConnectionImage:
+            "images/level3_before_connection_image.jpg",
+
+        beforeConnectionText:
+            "images/level3_before_connection_text.png",
 
         showNumbers: true,
 
@@ -127,6 +148,14 @@ const levels = [
 
     {
         image: "images/level4.png",
+
+        // Images shown before the player starts connecting
+        beforeConnectionImage:
+            "images/level4_before_connection_image.jpg",
+
+        beforeConnectionText:
+            "images/level4_before_connection_text.png",
+
 
         showNumbers: true,
 

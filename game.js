@@ -484,6 +484,70 @@ function fadeTextRandomly(speed) {
 const SVG_NS =
     "http://www.w3.org/2000/svg";
 
+// ==========================================
+// BEFORE CONNECTION IMAGES
+// ==========================================
+
+// Background image shown before connection
+const beforeConnectionImage =
+    document.createElementNS(
+        SVG_NS,
+        "image"
+    );
+
+beforeConnectionImage.classList.add(
+    "before-connection-image"
+    );
+
+
+// Text/image shown on top before connection
+const beforeConnectionText =
+    document.createElementNS(
+        SVG_NS,
+        "image"
+    );
+
+beforeConnectionText.classList.add(
+    "before-connection-text"
+    );
+
+
+// Make both images cover the whole SVG
+[
+    beforeConnectionImage,
+    beforeConnectionText
+].forEach(image => {
+
+    image.setAttribute(
+        "x",
+        "0"
+    );
+
+    image.setAttribute(
+        "y",
+        "0"
+    );
+
+    image.setAttribute(
+        "width",
+        "100%"
+    );
+
+    image.setAttribute(
+        "height",
+        "100%"
+    );
+
+    image.setAttribute(
+        "preserveAspectRatio",
+        "xMidYMid meet"
+    );
+
+    // Smooth fade
+    image.style.transition =
+        "opacity 1s ease";
+
+});
 
 // ==========================================
 // GAME STATE
@@ -609,9 +673,78 @@ function loadLevel(levelIndex) {
     // SET BACKGROUND IMAGE
     // ==============================
 
-    // ⭐ 每一关开始时，强制隐藏背景图
-    backgroundImage.classList.remove("revealed");
-    backgroundImage.setAttribute("href", level.image);
+    // --------------------------------------
+    // Final image
+    // --------------------------------------
+
+    backgroundImage.classList.remove(
+        "revealed"
+    );
+
+    backgroundImage.setAttribute(
+        "href",
+        level.image
+    );
+
+
+    // --------------------------------------
+    // Before-connection background
+    // --------------------------------------
+
+    beforeConnectionImage.setAttribute(
+        "href",
+        level.beforeConnectionImage
+    );
+
+    // ======================================
+    // IMAGE LAYER ORDER
+    // ======================================
+
+    // Remove old image layers
+    beforeConnectionImage.remove();
+    beforeConnectionText.remove();
+
+
+    // --------------------------------------
+    // Before-connection background
+    // --------------------------------------
+
+    svg.insertBefore(
+        beforeConnectionImage,
+        backgroundImage
+    );
+
+
+    // --------------------------------------
+    // Before-connection text
+    // --------------------------------------
+
+    svg.insertBefore(
+        beforeConnectionText,
+        backgroundImage
+    );
+
+    // --------------------------------------
+    // Before-connection text
+    // --------------------------------------
+
+    beforeConnectionText.setAttribute(
+        "href",
+        level.beforeConnectionText
+    );
+
+
+    // --------------------------------------
+    // Reset visibility
+    // --------------------------------------
+
+    beforeConnectionImage.style.opacity = "1";
+
+    beforeConnectionText.style.opacity = "1";
+
+
+    // Make sure final image is hidden
+    backgroundImage.style.opacity = "0";
 
     // --------------------------------------
     // Reset level dialog
@@ -672,9 +805,9 @@ function loadLevel(levelIndex) {
     // Show level introduction text
     // --------------------------------------
 
-    showLevelDialog(
-        levelIndex + 1
-    )
+    // showLevelDialog(
+    //     levelIndex + 1
+    // )
 }
 
 
@@ -942,11 +1075,11 @@ function handlePointClick(index) {
     ) {
 
         // First point clicked
-        if (currentPointIndex === 0) {
+        // if (currentPointIndex === 0) {
 
-            fadeTextRandomly(140);
+        //     fadeTextRandomly(140);
 
-        }
+        // }
 
         // Play click sound
         clickSound.currentTime = 0;
@@ -1311,10 +1444,23 @@ function completeLevel() {
     // Reveal image
     // --------------------------------------
 
-    backgroundImage.classList.add(
-        "revealed"
-    );
+    // 1. Fade out before-connection layers
 
+    beforeConnectionText.style.opacity = "0";
+
+    beforeConnectionImage.style.opacity = "0";
+
+    // 2. Reveal final background image
+
+    setTimeout(() => {
+
+        backgroundImage.classList.add(
+            "revealed"
+        );
+
+        backgroundImage.style.opacity = "1";
+
+    }, 300);
     // --------------------------------------
     // Fade out completed points and lines
     // --------------------------------------
