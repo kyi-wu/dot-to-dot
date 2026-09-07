@@ -72,10 +72,10 @@ const levels = [
 
     // Images shown before the player starts connecting
     beforeConnectionImage:
-        "images/level1_before_connection_image.png",
+        "images/level1_before.png",
 
     beforeConnectionText:
-        "images/level1_before_connection_text.png",
+        "images/level1_text.png",
 
     showNumbers: true,
             // -------------------------------------
@@ -96,19 +96,20 @@ const levels = [
         },
 
     points: [
-            { x: 1384, y: 1024 },
-            { x: 1380, y: 555 },
-            { x: 1285, y: 313 },
-            { x: 1237, y: 131 },
-            { x: 1007, y: 61 },
-            { x: 930, y: 307 },
-            { x: 682, y: 741 },
-            { x: 800, y: 781 },
-            { x: 1005, y: 686 },
-            { x: 1055, y: 752 },
-            { x: 1077, y: 821 },
-            { x: 887, y: 875 },
-            { x: 984, y: 1029 }
+            { x: 1520, y: 1072 },
+            { x: 1516, y: 544 },
+            { x: 1410, y: 305 },
+            { x: 1372, y: 99 },
+            { x: 1224, y: 21 },
+            { x: 1076, y: 21 },
+            { x: 1000, y: 177 },
+            { x: 1010, y: 285 },
+            { x: 733, y: 757 },
+            { x: 853, y: 808 },
+            { x: 1090, y: 705 },
+            { x: 1184, y: 838 },
+            { x: 975, y: 918 },
+            { x: 1072, y: 1070 }
     ]
     },
 
