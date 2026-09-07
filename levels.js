@@ -190,10 +190,10 @@ const levels = [
 
             pointHover: "#EEEEEE",
 
-            completedPoint: "#4CAF50",
-            completedPointStroke: "#388E3C",
+            completedPoint: "#4cafad",
+            completedPointStroke: "#4cafad",
 
-            line: "#4CAF50",
+            line: "#4cafad",
 
             number: "#333333"
         },
@@ -242,10 +242,10 @@ const levels = [
 
             pointHover: "#EEEEEE",
 
-            completedPoint: "#4CAF50",
-            completedPointStroke: "#388E3C",
+            completedPoint: "#4cafad",
+            completedPointStroke: "#4cafad",
 
-            line: "#4CAF50",
+            line: "#4cafad",
 
             number: "#333333"
         },
@@ -299,10 +299,10 @@ const levels = [
 
             pointHover: "#EEEEEE",
 
-            completedPoint: "#4CAF50",
-            completedPointStroke: "#388E3C",
+            completedPoint: "#4cafad",
+            completedPointStroke: "#4cafad",
 
-            line: "#4CAF50",
+            line: "#4cafad",
 
             number: "#333333"
         },
