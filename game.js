@@ -562,6 +562,17 @@ let levelCompleted = false;
 let numbersVisible = true;
 
 // ==========================================
+// FREE CONNECT / DRAWING STATE
+// ==========================================
+
+// Whether the player is currently drawing
+let isDrawing = false;
+
+// The point where the current stroke starts
+let strokeStartPoint = null;
+
+
+// ==========================================
 // DIALOG TIMERS
 // ==========================================
 // Dialog timers
@@ -652,6 +663,10 @@ function loadLevel(levelIndex) {
 
     levelCompleted = false;
 
+    // Reset free drawing state
+    isDrawing = false;
+
+    strokeStartPoint = null;
 
     numbersVisible =
         GAME_CONFIG.showNumbers &&
@@ -1041,49 +1056,22 @@ function createPoint(point, index) {
 }
 
 
-// ==========================================
-// HANDLE POINT CLICK
-// ==========================================
+function handleSequentialConnect(index) {
 
-function handlePointClick(index) {
-
-    if (levelCompleted) {
-
-        return;
-
-    }
-
-
-    console.log(
-        "Clicked point:",
-        index + 1
-    );
-
-
-    console.log(
-        "Expected point:",
-        currentPointIndex + 1
-    );
+    const level =
+        levels[currentLevelIndex];
 
 
     // --------------------------------------
-    // Correct point 正确点击
+    // Correct point
     // --------------------------------------
 
-    if (
-        index === currentPointIndex
-    ) {
-
-        // First point clicked
-        // if (currentPointIndex === 0) {
-
-        //     fadeTextRandomly(140);
-
-        // }
+    if (index === currentPointIndex) {
 
         // Play click sound
         clickSound.currentTime = 0;
         clickSound.play();
+
 
         // Connect to previous point
         if (currentPointIndex > 0) {
@@ -1095,13 +1083,16 @@ function handlePointClick(index) {
 
         }
 
+
         currentPointIndex++;
+
 
         updatePointAppearance();
 
+
+        // --------------------------------------
         // Check completion
-        const level =
-            levels[currentLevelIndex];
+        // --------------------------------------
 
         if (
             currentPointIndex >=
@@ -1111,6 +1102,7 @@ function handlePointClick(index) {
             completeLevel();
 
         }
+
     }
 
 
@@ -1120,11 +1112,140 @@ function handlePointClick(index) {
 
     else {
 
-        // wrongSound.currentTime = 0;
-        // wrongSound.play();
-
         wrongPointFeedback(index);
 
+    }
+}
+
+// ==========================================
+// HANDLE POINT CLICK
+// ==========================================
+function handlePointClick(index) {
+
+    if (levelCompleted) {
+        return;
+    }
+
+
+    const level =
+        levels[currentLevelIndex];
+
+
+    console.log(
+        "Clicked point:",
+        index + 1
+    );
+
+
+    // ======================================
+    // FREE CONNECTION MODE
+    // ======================================
+
+    if (level.freeConnect) {
+
+        handleFreeConnect(index);
+
+        return;
+    }
+
+
+    // ======================================
+    // NORMAL SEQUENTIAL MODE
+    // ======================================
+
+    handleSequentialConnect(index);
+}
+
+function drawFreeLine(index1, index2) {
+
+    drawLine(
+        index1,
+        index2
+    );
+
+}
+
+
+// ==========================================
+// FREE CONNECTION MODE
+// ==========================================
+
+// ==========================================
+// FREE CONNECTION MODE
+// ==========================================
+
+function handleFreeConnect(index) {
+
+    const level =
+        levels[currentLevelIndex];
+
+
+    // --------------------------------------
+    // First point of a new stroke
+    // --------------------------------------
+
+    if (!isDrawing) {
+
+        isDrawing = true;
+
+        strokeStartPoint = index;
+
+        currentPointIndex = index;
+
+        updatePointAppearance();
+
+        return;
+    }
+
+
+    // --------------------------------------
+    // Same point
+    // --------------------------------------
+
+    if (
+        index === currentPointIndex
+    ) {
+
+        return;
+    }
+
+
+    // --------------------------------------
+    // Connect current point
+    // to clicked point
+    // --------------------------------------
+
+    drawFreeLine(
+        currentPointIndex,
+        index
+    );
+
+
+    // --------------------------------------
+    // Move to new point
+    // --------------------------------------
+
+    currentPointIndex = index;
+
+
+    updatePointAppearance();
+
+
+    // --------------------------------------
+    // Check completion point
+    // --------------------------------------
+
+    const completionIndex =
+        level.completionPoint - 1;
+
+
+    if (
+        index === completionIndex
+    ) {
+
+        completeLevel();
+
+        return;
     }
 }
 
@@ -1260,13 +1381,16 @@ function drawLine(index1, index2) {
 // ==========================================
 // UPDATE POINT APPEARANCE
 // ==========================================
-
 function updatePointAppearance() {
 
     const groups =
         svg.querySelectorAll(
             ".point-group"
         );
+
+
+    const level =
+        levels[currentLevelIndex];
 
 
     groups.forEach(
@@ -1279,23 +1403,44 @@ function updatePointAppearance() {
 
 
             if (!circle) {
-
                 return;
-
             }
 
 
+            // Reset
             circle.classList.remove(
                 "completed"
             );
-
 
             circle.classList.remove(
                 "current"
             );
 
 
-            // Already connected
+            // ==================================
+            // FREE CONNECTION MODE
+            // ==================================
+
+            if (level.freeConnect) {
+
+                if (
+                    index ===
+                    currentPointIndex
+                ) {
+
+                    circle.classList.add(
+                        "current"
+                    );
+
+                }
+
+                return;
+            }
+
+
+            // ==================================
+            // NORMAL MODE
+            // ==================================
 
             if (
                 index <
@@ -1308,8 +1453,6 @@ function updatePointAppearance() {
 
             }
 
-
-            // Current point
 
             if (
                 index ===
@@ -1325,8 +1468,6 @@ function updatePointAppearance() {
         }
     );
 }
-
-
 // ==========================================
 // WRONG POINT FEEDBACK
 // ==========================================
@@ -1431,13 +1572,8 @@ function completeLevel() {
 
     levelCompleted = true;
 
-
-    // --------------------------------------
-    // Complete sound
-    // --------------------------------------
-
-    // completeSound.currentTime = 0;
-    // completeSound.play();
+    const level =
+            levels[currentLevelIndex];
 
 
     // --------------------------------------
@@ -1492,18 +1628,6 @@ function completeLevel() {
         );
 
 
-    // ======================================
-    // SHOW COMPLETION DIALOG
-    // ======================================
-
-    // const level =
-    //     levels[currentLevelIndex];
-
-    // // Show custom completion text
-
-    // showLevelDialog(
-    //     currentLevelIndex + 1
-    // );
 
     // --------------------------------------
     // Last level / next level
@@ -1717,3 +1841,53 @@ function updateNumbersButton() {
             ? "Hide Numbers"
             : "Show Numbers";
 }
+
+
+// ==========================================
+// RIGHT CLICK — END CURRENT STROKE
+// ==========================================
+
+svg.addEventListener(
+    "contextmenu",
+    function(event) {
+
+        // Prevent browser right-click menu
+        event.preventDefault();
+
+
+        const level =
+            levels[currentLevelIndex];
+
+
+        // Only active in free-connect levels
+        if (
+            !level.freeConnect
+        ) {
+
+            return;
+        }
+
+
+        // --------------------------------------
+        // End current stroke
+        // --------------------------------------
+
+        isDrawing = false;
+
+        strokeStartPoint = null;
+
+
+        // --------------------------------------
+        // Remove current-point highlight
+        // --------------------------------------
+
+        currentPointIndex = -1;
+
+        updatePointAppearance();
+
+
+        console.log(
+            "Stroke ended"
+        );
+    }
+);
