@@ -121,9 +121,14 @@ body {
 /* -------------------------
    Background image
 ------------------------- */
+.before-connection-image,
+.before-connection-text {
+    opacity: 1;
+    transition: opacity 1s ease;
+}
 
 #background-image {
-    opacity: 0;
+    opacity: 1;
 }
 
 #background-image.revealed {
