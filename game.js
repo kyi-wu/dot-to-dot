@@ -8,16 +8,16 @@ const GAME_CONFIG = {
 };
 
 // ==========================================
-// ENDING PAGE CONFIG
+// ENDING PAGE CONFIG (自定义 Ending 页面样式)
 // ==========================================
 
 const ENDING_CONFIG = {
-    text: "Thank you for playing",
-    backgroundColor: "#dae6ab",
-    textColor: "#FFFFFF",
-    fontFamily: "Reenie Beanie",
-    fontSize: "48px",
-    fadeDuration: "2s"
+    text: "Thank you for playing :)",
+    backgroundColor: "#dae6ab", // 背景颜色 (可自定义)
+    textColor: "#FFFFFF",       // 文字颜色 (可自定义)
+    fontFamily: "Reenie Beanie", // 字体 (可自定义)
+    fontSize: "52px",           // 字体大小
+    fadeDuration: "2s"          // 淡入动画时长
 };
 
 // ==========================================
@@ -35,22 +35,24 @@ const DEFAULT_LEVEL_COLORS = {
 };
 
 // ==========================================
-// DOM ELEMENTS
+// DOM ELEMENTS 主要元素
 // ==========================================
 
 const svg = document.getElementById("game-svg");
-const backgroundImage = document.getElementById("background-image");
-const currentLevelElement = document.getElementById("currentLevel");
-const restartButton = document.getElementById("restart-button");
-const undoButton = document.getElementById("undo-button");
-const numbersButton = document.getElementById("numbers-button");
-const nextButton = document.getElementById("next-button");
-const messageElement = document.getElementById("message");
 
-// 隐藏 Undo 按钮
-if (undoButton) {
-    undoButton.style.display = "none";
-}
+const backgroundImage = document.getElementById("background-image");
+
+const currentLevelElement = document.getElementById("currentLevel");
+
+const restartButton = document.getElementById("restart-button");
+
+const undoButton = document.getElementById("undo-button");
+
+const numbersButton = document.getElementById("numbers-button");
+
+const nextButton = document.getElementById("next-button");
+
+const messageElement = document.getElementById("message");
 
 // 创建 ENDING PAGE 节点
 const endingPage = document.createElement("div");
@@ -65,7 +67,7 @@ endingPage.style.display = "flex";
 endingPage.style.justifyContent = "center";
 endingPage.style.alignItems = "center";
 endingPage.style.opacity = "0";
-endingPage.style.pointerEvents = "none";
+endingPage.style.pointerEvents = "none"; // 初始不可交互
 endingPage.style.transition = `opacity ${ENDING_CONFIG.fadeDuration} ease`;
 endingPage.style.zIndex = "9999";
 
@@ -79,6 +81,7 @@ endingText.style.letterSpacing = "2px";
 
 endingPage.appendChild(endingText);
 document.body.appendChild(endingPage);
+
 
 // ==========================================
 // SOUND 音效
@@ -95,10 +98,150 @@ const backgroundMusic = new Audio("sounds/background.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.2;
 
+// Try to start immediately
+backgroundMusic.play().catch(() => {
+    console.log("Waiting for user interaction to start music.");
+});
+
+// If autoplay is blocked, start music after the first user interaction
 document.addEventListener("click", function startMusic() {
     backgroundMusic.play().catch(() => {});
     document.removeEventListener("click", startMusic);
 });
+
+
+// ==========================================
+// LEVEL COMPLETION DIALOG
+// ==========================================
+
+const levelDialog = document.createElement("div");
+levelDialog.classList.add("level-dialog", "hidden");
+
+const levelDialogBox = document.createElement("div");
+levelDialogBox.classList.add("level-dialog-box");
+
+const levelDialogText = document.createElement("div");
+levelDialogText.classList.add("level-dialog-text");
+
+const levelDialogButton = document.createElement("button");
+levelDialogButton.classList.add("level-dialog-button");
+levelDialogButton.textContent = "Continue";
+
+levelDialogBox.appendChild(levelDialogText);
+levelDialogBox.appendChild(levelDialogButton);
+levelDialog.appendChild(levelDialogBox);
+document.getElementById("game-board").appendChild(levelDialog);
+
+
+// ==========================================
+// LEVEL COMPLETION DIALOG - Text
+// ==========================================
+const LEVEL_DIALOG_CONFIG = {
+    1: {
+        x1: 1071,
+        y1: 646,
+        x2: 1810,
+        y2: 969,
+        text: "A Brighton summer, salt in the breeze, melting softly into sunlight."
+    },
+    2: {
+        x1: 1300,
+        y1: 100,
+        x2: 1850,
+        y2: 350,
+        text: "Look at that!"
+    },
+    3: {
+        x1: 1300,
+        y1: 100,
+        x2: 1850,
+        y2: 350,
+        text: "Almost there!"
+    },
+    4: {
+        x1: 1300,
+        y1: 100,
+        x2: 1850,
+        y2: 350,
+        text: "You did it!"
+    }
+};
+
+// ==========================================
+// SHOW LEVEL DIALOG
+// ==========================================
+
+function showLevelDialog(levelNumber) {
+    const config = LEVEL_DIALOG_CONFIG[levelNumber];
+    if (!config) return;
+
+    clearTimeout(dialogTimer);
+    clearTimeout(typingTimer);
+    clearTimeout(eraseTimer);
+
+    levelDialog.classList.remove("show", "button-visible", "hidden");
+    levelDialogText.textContent = "";
+    levelDialogButton.style.opacity = "0";
+    levelDialogButton.style.pointerEvents = "none";
+
+    const topLeft = svg.createSVGPoint();
+    topLeft.x = config.x1;
+    topLeft.y = config.y1;
+
+    const bottomRight = svg.createSVGPoint();
+    bottomRight.x = config.x2;
+    bottomRight.y = config.y2;
+
+    const screenTopLeft = topLeft.matrixTransform(svg.getScreenCTM());
+    const screenBottomRight = bottomRight.matrixTransform(svg.getScreenCTM());
+
+    levelDialogBox.style.left = `${screenTopLeft.x}px`;
+    levelDialogBox.style.top = `${screenTopLeft.y}px`;
+    levelDialogBox.style.width = `${screenBottomRight.x - screenTopLeft.x}px`;
+    levelDialogBox.style.height = `${screenBottomRight.y - screenTopLeft.y}px`;
+
+    dialogTimer = setTimeout(() => {
+        levelDialog.classList.add("show");
+        typeText(config.text, 80);
+    }, 0);
+}
+
+function typeText(text) {
+    levelDialogText.textContent = text;
+}
+
+function showContinueButton() {
+    levelDialog.classList.add("button-visible");
+}
+
+function fadeTextRandomly(speed) {
+    clearTimeout(eraseTimer);
+    const text = levelDialogText.textContent;
+    levelDialogText.innerHTML = "";
+    levelDialogText.style.whiteSpace = "pre-wrap";
+
+    const characters = Array.from(text).map(char => {
+        const span = document.createElement("span");
+        span.textContent = char;
+        span.style.display = "inline";
+        span.style.opacity = "1";
+        span.style.transition = "opacity 2.5s ease";
+        levelDialogText.appendChild(span);
+        return { char, span };
+    });
+
+    const availableCharacters = characters.filter(item => item.char.trim() !== "");
+    const shuffled = [...availableCharacters].sort(() => Math.random() - 0.5);
+
+    let index = 0;
+    function fadeNextCharacter() {
+        if (index >= shuffled.length) return;
+        shuffled[index].span.style.opacity = "0";
+        index++;
+        eraseTimer = setTimeout(fadeNextCharacter, speed);
+    }
+    fadeNextCharacter();
+}
 
 // ==========================================
 // SVG NAMESPACE & LAYER CREATION
@@ -106,6 +249,7 @@ document.addEventListener("click", function startMusic() {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+// 创建图片层
 const beforeConnectionImage = document.createElementNS(SVG_NS, "image");
 const beforeConnectionText = document.createElementNS(SVG_NS, "image");
 
@@ -113,19 +257,22 @@ backgroundImage.classList.add("background-image");
 beforeConnectionImage.classList.add("before-connection-image");
 beforeConnectionText.classList.add("before-connection-text");
 
+// 按从下到上的顺序添加到 SVG
 svg.appendChild(backgroundImage);
 svg.appendChild(beforeConnectionImage);
 svg.appendChild(beforeConnectionText);
 
+// 设置覆盖与过渡动画
 [backgroundImage, beforeConnectionImage, beforeConnectionText].forEach(image => {
     image.setAttribute("x", "0");
     image.setAttribute("y", "0");
     image.setAttribute("width", "100%");
     image.setAttribute("height", "100%");
     image.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    image.style.transition = "opacity 1.5s ease";
+    image.style.transition = "opacity 1s ease";
 });
 
+// 全局禁用右键默认菜单，并在自由连线时中断当前笔画
 document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     stopCurrentStroke();
@@ -136,34 +283,21 @@ document.addEventListener("contextmenu", (e) => {
 // ==========================================
 
 let currentLevelIndex = 0;
-let currentPointIndex = -1;
+let currentPointIndex = 0;
 let levelCompleted = false;
 let numbersVisible = true;
 
-// Dynamic drawing state for free connect
+// Drawing state
 let isDrawing = false;
 let strokeStartPoint = null;
+let currentStrokeLines = [];
+let completedStrokes = [];
+let hasShownFreeConnectHint = false;
 
-// ==========================================
-// IMAGE PRELOAD HELPER (核心解卡顿辅助方法)
-// ==========================================
-
-function preloadImages(urls) {
-    const promises = urls.filter(url => url && url.trim() !== "").map(url => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.src = url;
-            // 如果浏览器支持 decode，提前在后台线程解码图片，彻底避免卡顿
-            if (img.decode) {
-                img.decode().then(resolve).catch(resolve);
-            } else {
-                img.onload = resolve;
-                img.onerror = resolve;
-            }
-        });
-    });
-    return Promise.all(promises);
-}
+// Timers
+let dialogTimer = null;
+let typingTimer = null;
+let eraseTimer = null;
 
 // ==========================================
 // APPLY LEVEL COLORS
@@ -185,7 +319,7 @@ function applyLevelColors(level) {
 // LOAD LEVEL
 // ==========================================
 
-async function loadLevel(levelIndex) {
+function loadLevel(levelIndex) {
     const level = levels[levelIndex];
     
     applyLevelColors(level);
@@ -194,40 +328,39 @@ async function loadLevel(levelIndex) {
     levelCompleted = false;
     isDrawing = false;
     strokeStartPoint = null;
+    currentStrokeLines = [];
+    completedStrokes = [];
 
     numbersVisible = GAME_CONFIG.showNumbers && level.showNumbers;
     currentLevelElement.textContent = levelIndex + 1;
     messageElement.textContent = "";
     nextButton.classList.add("hidden");
 
+    // Hide Ending Page on reload
     endingPage.style.opacity = "0";
     endingPage.style.pointerEvents = "none";
 
-    // 1. 先将图片透明度置 0，防止切换时的残影
-    beforeConnectionImage.style.opacity = "0";
-    beforeConnectionText.style.opacity = "0";
-    backgroundImage.style.opacity = "0";
-
-    // 2. 预加载当前关卡的所有图片，确保它们完全准备好
-    const imagesToLoad = [
-        level.image,
-        level.beforeConnectionImage,
-        level.beforeConnectionText
-    ];
-
-    await preloadImages(imagesToLoad);
-
-    // 3. 图片加载/解码完成后，同步设置 href 并同时显示
-    backgroundImage.setAttribute("href", level.image || "");
+    // SET IMAGES
+    backgroundImage.classList.remove("revealed");
+    backgroundImage.setAttribute("href", level.image);
     beforeConnectionImage.setAttribute("href", level.beforeConnectionImage || "");
     beforeConnectionText.setAttribute("href", level.beforeConnectionText || "");
 
-    // 使用 requestAnimationFrame 保证浏览器在一帧内同步渲染淡入
-    requestAnimationFrame(() => {
-        beforeConnectionImage.style.opacity = "1";
-        beforeConnectionText.style.opacity = "1";
-        backgroundImage.style.opacity = "1";
-    });
+    svg.insertBefore(beforeConnectionImage, beforeConnectionText);
+    svg.insertBefore(backgroundImage, beforeConnectionImage);
+
+    beforeConnectionImage.style.opacity = "1";
+    beforeConnectionText.style.opacity = "1";
+    backgroundImage.style.opacity = "1";
+
+    // Reset level dialog
+    clearTimeout(dialogTimer);
+    clearTimeout(typingTimer);
+    clearTimeout(eraseTimer);
+
+    levelDialog.classList.add("hidden");
+    levelDialog.classList.remove("show", "button-visible");
+    levelDialogText.textContent = "";
 
     // Remove old game elements
     svg.querySelectorAll(".connection-line, .point-group, .free-connect-hint").forEach(element => {
@@ -253,6 +386,7 @@ function createPoint(point, index) {
     group.classList.add("point-group");
     group.dataset.index = index;
 
+    // Hit Area
     const hitArea = document.createElementNS(SVG_NS, "circle");
     hitArea.setAttribute("cx", point.x);
     hitArea.setAttribute("cy", point.y);
@@ -261,12 +395,16 @@ function createPoint(point, index) {
     hitArea.setAttribute("pointer-events", "all");
     hitArea.style.cursor = "pointer";
 
+    // Circle
     const circle = document.createElementNS(SVG_NS, "circle");
     circle.setAttribute("cx", point.x);
     circle.setAttribute("cy", point.y);
     circle.setAttribute("r", "10");
     circle.classList.add("point-circle");
+    circle.style.transformBox = "fill-box";
+    circle.style.transformOrigin = "center";
 
+    // Number
     const number = document.createElementNS(SVG_NS, "text");
     number.setAttribute("x", point.x - 10);
     number.setAttribute("y", point.y - 10);
@@ -280,6 +418,7 @@ function createPoint(point, index) {
 
     svg.appendChild(group);
 
+    // Event Listeners
     [hitArea, circle, number].forEach(elem => {
         elem.addEventListener("click", function(event) {
             event.stopPropagation();
@@ -288,25 +427,9 @@ function createPoint(point, index) {
     });
 }
 
-// ==========================================
-// HANDLE POINT CLICK
-// ==========================================
-
-function handlePointClick(index) {
-    if (levelCompleted) return;
-
-    const level = levels[currentLevelIndex];
-
-    if (level.freeConnect) {
-        handleFreeConnect(index);
-        return;
-    }
-
-    handleSequentialConnect(index);
-}
-
 function handleSequentialConnect(index) {
     const level = levels[currentLevelIndex];
+
     const targetIndex = currentPointIndex === -1 ? 0 : currentPointIndex;
 
     if (index === targetIndex) {
@@ -328,6 +451,34 @@ function handleSequentialConnect(index) {
     }
 }
 
+// ==========================================
+// HANDLE POINT CLICK
+// ==========================================
+
+function handlePointClick(index) {
+    if (levelCompleted) return;
+
+    const level = levels[currentLevelIndex];
+
+    if (level.freeConnect) {
+        handleFreeConnect(index);
+        return;
+    }
+
+    handleSequentialConnect(index);
+}
+
+function drawFreeLine(index1, index2) {
+    const line = drawLine(index1, index2);
+    if (line) {
+        currentStrokeLines.push(line);
+    }
+}
+
+// ==========================================
+// FREE CONNECTION MODE (自由连线模式)
+// ==========================================
+
 function handleFreeConnect(index) {
     const level = levels[currentLevelIndex];
 
@@ -338,6 +489,11 @@ function handleFreeConnect(index) {
         clickSound.currentTime = 0;
         clickSound.play();
         updatePointAppearance();
+
+        if (!hasShownFreeConnectHint) {
+            showFreeConnectHint(index);
+            hasShownFreeConnectHint = true;
+        }
         return;
     }
 
@@ -345,7 +501,7 @@ function handleFreeConnect(index) {
 
     clickSound.currentTime = 0;
     clickSound.play();
-    drawLine(currentPointIndex, index);
+    drawFreeLine(currentPointIndex, index);
 
     currentPointIndex = index;
     updatePointAppearance();
@@ -353,6 +509,73 @@ function handleFreeConnect(index) {
     const completionIndex = level.completionPoint - 1;
     if (index === completionIndex) {
         completeLevel();
+    }
+}
+
+// ==========================================
+// 自由连线右键提示框
+// ==========================================
+
+function showFreeConnectHint(pointIndex) {
+    const level = levels[currentLevelIndex];
+    const point = level.points[pointIndex];
+    if (!point) return;
+
+    const svgPoint = svg.createSVGPoint();
+    svgPoint.x = point.x;
+    svgPoint.y = point.y;
+    const screenPos = svgPoint.matrixTransform(svg.getScreenCTM());
+
+    const hintElement = document.createElement("div");
+    hintElement.classList.add("free-connect-hint");
+    hintElement.textContent = "Right click to end a connection";
+
+    hintElement.style.position = "fixed";
+    hintElement.style.left = `${screenPos.x - 200}px`;
+    hintElement.style.top = `${screenPos.y - 20}px`;
+    hintElement.style.backgroundColor = "rgb(35, 108, 121)";
+    hintElement.style.color = "#ffffff";
+    hintElement.style.padding = "8px 14px";
+    hintElement.style.borderRadius = "20px";
+    hintElement.style.fontSize = "14px";
+    hintElement.style.pointerEvents = "none";
+    hintElement.style.zIndex = "1000";
+    hintElement.style.whiteSpace = "nowrap";
+    hintElement.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+    hintElement.style.opacity = "0";
+    hintElement.style.transform = "translateY(0px)";
+    hintElement.style.transition = "opacity 1.5s ease, transform 1.5s ease";
+
+    document.body.appendChild(hintElement);
+
+    requestAnimationFrame(() => {
+        hintElement.style.opacity = "1";
+        
+        setTimeout(() => {
+            hintElement.style.opacity = "0";
+            hintElement.style.transform = "translateY(-15px)";
+        }, 1500);
+
+        setTimeout(() => {
+            hintElement.remove();
+        }, 3200);
+    });
+}
+
+// ==========================================
+// 右键停止连线逻辑
+// ==========================================
+
+function stopCurrentStroke() {
+    if (levelCompleted) return;
+
+    const level = levels[currentLevelIndex];
+
+    if (level.freeConnect && isDrawing) {
+        isDrawing = false;
+        strokeStartPoint = null;
+        currentPointIndex = -1;
+        updatePointAppearance();
     }
 }
 
@@ -385,19 +608,6 @@ function drawLine(index1, index2) {
     return line;
 }
 
-function stopCurrentStroke() {
-    if (levelCompleted) return;
-
-    const level = levels[currentLevelIndex];
-
-    if (level.freeConnect && isDrawing) {
-        isDrawing = false;
-        strokeStartPoint = null;
-        currentPointIndex = -1;
-        updatePointAppearance();
-    }
-}
-
 // ==========================================
 // UPDATE POINT APPEARANCE
 // ==========================================
@@ -428,6 +638,10 @@ function updatePointAppearance() {
     });
 }
 
+// ==========================================
+// WRONG POINT FEEDBACK
+// ==========================================
+
 function wrongPointFeedback(index) {
     const group = svg.querySelector(`.point-group[data-index="${index}"]`);
     if (!group) return;
@@ -446,6 +660,10 @@ function wrongPointFeedback(index) {
         { duration: 250 }
     );
 }
+
+// ==========================================
+// FADE OUT COMPLETED GAME ELEMENTS
+// ==========================================
 
 function fadeOutCompletedElements() {
     svg.querySelectorAll(".connection-line").forEach(line => {
@@ -475,14 +693,20 @@ function completeLevel() {
         circle.classList.add("completed");
     });
 
-    setTimeout(() => {
-        if (currentLevelIndex < levels.length - 1) {
-            nextButton.classList.remove("hidden");
-        } else {
+    // 判断是否为最后一关
+    if (currentLevelIndex < levels.length - 1) {
+        nextButton.classList.remove("hidden");
+    } else {
+        // 最后一关完成后，延迟 1.5 秒展示全屏 Ending Page 并定格
+        setTimeout(() => {
             showEndingPage();
-        }
-    }, 1500);
+        }, 1500);
+    }
 }
+
+// ==========================================
+// SHOW ENDING PAGE
+// ==========================================
 
 function showEndingPage() {
     endingPage.style.pointerEvents = "all";
@@ -490,28 +714,14 @@ function showEndingPage() {
 }
 
 // ==========================================
-// NUMBERS VISIBILITY CONTROLS
+// CLOSE LEVEL DIALOG
 // ==========================================
 
-function updateNumbersVisibility() {
-    svg.querySelectorAll(".point-number").forEach(number => {
-        number.style.display = numbersVisible ? "block" : "none";
-    });
-}
-
-function updateNumbersButton() {
-    if (!numbersButton) return;
-    numbersButton.style.display = GAME_CONFIG.allowToggleNumbers ? "inline-block" : "none";
-    numbersButton.textContent = numbersVisible ? "Hide Numbers" : "Show Numbers";
-}
-
-if (numbersButton) {
-    numbersButton.addEventListener("click", () => {
-        numbersVisible = !numbersVisible;
-        updateNumbersVisibility();
-        updateNumbersButton();
-    });
-}
+levelDialogButton.addEventListener("click", () => {
+    levelDialog.classList.add("hidden");
+    levelDialog.classList.remove("show", "button-visible");
+    document.getElementById("next-button").click();
+});
 
 // ==========================================
 // BUTTON CONTROLS
@@ -527,5 +737,5 @@ nextButton.addEventListener("click", function() {
     loadLevel(currentLevelIndex);
 });
 
-// Start game
+// Start the game
 loadLevel(currentLevelIndex);
