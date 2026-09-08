@@ -213,7 +213,7 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 // 创建图片层，包含 completeImage
 const beforeConnectionImage = document.createElementNS(SVG_NS, "image");
 const beforeConnectionText = document.createElementNS(SVG_NS, "image");
-const completeImage = document.createElementNS(SVG_NS, "image"); // 新增：通关额外叠加图
+const completeImage = document.createElementNS(SVG_NS, "image"); // 通关额外叠加图
 
 backgroundImage.classList.add("background-image");
 beforeConnectionImage.classList.add("before-connection-image");
@@ -247,6 +247,7 @@ document.addEventListener("contextmenu", (e) => {
 // ==========================================
 
 let currentLevelIndex = 0;
+let loadLevelToken = 0;
 let currentPointIndex = -1;
 let levelCompleted = false;
 let numbersVisible = true;
@@ -280,10 +281,33 @@ function applyLevelColors(level) {
 }
 
 // ==========================================
+// PRELOAD LEVEL IMAGES
+// ==========================================
+
+// 等图片资源加载完成后再显示 SVG，避免切换关卡时
+// backgroundImage 先闪现，而 beforeConnectionImage 还没出现。
+function preloadImage(src) {
+    return new Promise(resolve => {
+        if (!src) {
+            resolve();
+            return;
+        }
+
+        const img = new Image();
+
+        img.onload = resolve;
+        img.onerror = resolve;
+
+        img.src = src;
+    });
+}
+
+// ==========================================
 // LOAD LEVEL
 // ==========================================
 
-function loadLevel(levelIndex) {
+async function loadLevel(levelIndex) {
+    const loadToken = ++loadLevelToken;
     const level = levels[levelIndex];
     
     applyLevelColors(level);
@@ -305,17 +329,67 @@ function loadLevel(levelIndex) {
     endingPage.style.pointerEvents = "none";
 
     // SET IMAGES
-    backgroundImage.classList.remove("revealed");
-    backgroundImage.setAttribute("href", level.image || "");
-    beforeConnectionImage.setAttribute("href", level.beforeConnectionImage || "");
-    beforeConnectionText.setAttribute("href", level.beforeConnectionText || "");
-    completeImage.setAttribute("href", level.completeImage || ""); // 设置通关完成图
 
-    // 初始显示连线前图片与背景图，隐藏通关完成图
-    beforeConnectionImage.style.opacity = "1";
-    beforeConnectionText.style.opacity = "1";
+    const imageSrc = level.image || "";
+    const beforeImageSrc = level.beforeConnectionImage || "";
+    const beforeTextSrc = level.beforeConnectionText || "";
+    const completeImageSrc = level.completeImage || "";
+
+    // 切换关卡时先隐藏整个 SVG
+    // 防止 backgroundImage 在 beforeConnectionImage 出现前闪现
+    svg.style.visibility = "hidden";
+
+    // 每关开始时取消 beforeConnection 图片的 transition
+    // 所以它们会直接出现，而不是 fade in
+    beforeConnectionImage.style.transition = "none";
+    beforeConnectionText.style.transition = "none";
+
+    backgroundImage.classList.remove("revealed");
+
+    backgroundImage.setAttribute("href", imageSrc);
+    beforeConnectionImage.setAttribute("href", beforeImageSrc);
+    beforeConnectionText.setAttribute("href", beforeTextSrc);
+    completeImage.setAttribute("href", completeImageSrc);
+
+    // Background 保持在最底层
+    backgroundImage.style.visibility = "visible";
     backgroundImage.style.opacity = "1";
+
+    // Complete image 一开始隐藏
+    completeImage.style.visibility = "hidden";
     completeImage.style.opacity = "0";
+
+    // Before connection image 直接显示
+    beforeConnectionImage.style.visibility = "visible";
+    beforeConnectionImage.style.opacity = "1";
+
+    // Before connection text 直接显示
+    beforeConnectionText.style.visibility = "visible";
+    beforeConnectionText.style.opacity = "1";
+
+    // 等待当前关卡所有图片加载完成
+    await Promise.all([
+        preloadImage(imageSrc),
+        preloadImage(beforeImageSrc),
+        preloadImage(beforeTextSrc),
+        preloadImage(completeImageSrc)
+    ]);
+
+    // 如果加载期间用户已经切换到另一关
+    // 就不要让旧关卡重新显示
+    if (loadToken !== loadLevelToken) return;
+
+    // 所有图片准备好后，一次性显示 SVG
+    svg.style.visibility = "visible";
+
+    // 下一帧恢复 transition
+    // 这样开局不会 fade in，但完成关卡时仍然可以 fade out
+    requestAnimationFrame(() => {
+        beforeConnectionImage.style.transition = "opacity 1s ease";
+        beforeConnectionText.style.transition = "opacity 1s ease";
+    });
+
+// Reset level dialog
 
     // Reset level dialog
     clearTimeout(dialogTimer);
@@ -647,7 +721,11 @@ function completeLevel() {
     levelCompleted = true;
     isDrawing = false;
 
-    // 1. 隐藏连线前的图形与文字（露底部的 backgroundImage）
+    // 1. 连线完成后，先取消 visibility 隐藏，再把 backgroundImage 淡入
+    backgroundImage.style.visibility = "visible";
+    backgroundImage.style.opacity = "1"; 
+
+    // 淡出前面的图片与文字
     beforeConnectionText.style.opacity = "0";
     beforeConnectionImage.style.opacity = "0";
 
@@ -661,21 +739,22 @@ function completeLevel() {
 
     const level = levels[currentLevelIndex];
 
-    // 3. 如果当前关卡有 completeImage，在 1 秒后淡入浮现
+    // 3. 背景图停留 2.5 秒后，取消 completeImage 的隐藏，并淡入浮现
     if (level.completeImage) {
         setTimeout(() => {
+            completeImage.style.visibility = "visible";
             completeImage.style.opacity = "1";
-        }, 2000);
+        }, 2500);
     }
 
-    // 4. 显示下一步按钮或结束页面
+    // 4. 显示下一步按钮或结束页面（顺延至 3.5 秒后显示）
     setTimeout(() => {
         if (currentLevelIndex < levels.length - 1) {
             nextButton.classList.remove("hidden");
         } else {
             showEndingPage();
         }
-    }, 3000);
+    }, 3500);
 }
 
 // ==========================================
