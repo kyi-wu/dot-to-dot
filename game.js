@@ -216,10 +216,7 @@ backgroundImage.classList.add("background-image");
 beforeConnectionImage.classList.add("before-connection-image");
 beforeConnectionText.classList.add("before-connection-text");
 
-// 【修正层级】按从下到上的顺序添加到 SVG：
-// 1. backgroundImage (最下层)
-// 2. beforeConnectionImage (中间层)
-// 3. beforeConnectionText (最上层)
+// 按从下到上的顺序添加到 SVG
 svg.appendChild(backgroundImage);
 svg.appendChild(beforeConnectionImage);
 svg.appendChild(beforeConnectionText);
@@ -232,6 +229,12 @@ svg.appendChild(beforeConnectionText);
     image.setAttribute("height", "100%");
     image.setAttribute("preserveAspectRatio", "xMidYMid meet");
     image.style.transition = "opacity 1s ease";
+});
+
+// 禁用游戏区域的默认右键菜单
+svg.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    stopCurrentStroke(); // 触发停止连线
 });
 
 // ==========================================
@@ -279,7 +282,7 @@ function loadLevel(levelIndex) {
     
     applyLevelColors(level);
 
-    currentPointIndex = 0;
+    currentPointIndex = -1; // 初始化为 -1 表示未选中任何点
     levelCompleted = false;
     isDrawing = false;
     strokeStartPoint = null;
@@ -291,25 +294,15 @@ function loadLevel(levelIndex) {
     messageElement.textContent = "";
     nextButton.classList.add("hidden");
 
-    // ==============================
     // SET IMAGES
-    // ==============================
-
-    // 最下层背景图
     backgroundImage.classList.remove("revealed");
     backgroundImage.setAttribute("href", level.image);
-
-    // 中间层 beforeConnectionImage
     beforeConnectionImage.setAttribute("href", level.beforeConnectionImage || "");
-
-    // 最上层 beforeConnectionText
     beforeConnectionText.setAttribute("href", level.beforeConnectionText || "");
 
-    // 【保证层级顺序】如果后续有其他元素动态插入，此操作可重新确立底层渲染顺序
     svg.insertBefore(beforeConnectionImage, beforeConnectionText);
     svg.insertBefore(backgroundImage, beforeConnectionImage);
 
-    // 重置透明度（显示顶层和中间层）
     beforeConnectionImage.style.opacity = "1";
     beforeConnectionText.style.opacity = "1";
     backgroundImage.style.opacity = "1";
@@ -391,7 +384,9 @@ function createPoint(point, index) {
 function handleSequentialConnect(index) {
     const level = levels[currentLevelIndex];
 
-    if (index === currentPointIndex) {
+    const targetIndex = currentPointIndex === -1 ? 0 : currentPointIndex;
+
+    if (index === targetIndex) {
         clickSound.currentTime = 0;
         clickSound.play();
 
@@ -399,7 +394,7 @@ function handleSequentialConnect(index) {
             drawLine(currentPointIndex - 1, currentPointIndex);
         }
 
-        currentPointIndex++;
+        currentPointIndex = targetIndex + 1;
         updatePointAppearance();
 
         if (currentPointIndex >= level.points.length) {
@@ -435,29 +430,56 @@ function drawFreeLine(index1, index2) {
 }
 
 // ==========================================
-// FREE CONNECTION MODE
+// FREE CONNECTION MODE (自由连线模式)
 // ==========================================
 
 function handleFreeConnect(index) {
     const level = levels[currentLevelIndex];
 
+    // 1. 如果尚未开始绘制，初始化当前一笔
     if (!isDrawing) {
         isDrawing = true;
         strokeStartPoint = index;
         currentPointIndex = index;
+        clickSound.currentTime = 0;
+        clickSound.play();
         updatePointAppearance();
         return;
     }
 
+    // 2. 如果点击的是同一个点，不作回应
     if (index === currentPointIndex) return;
 
+    // 3. 连线并播放音效
+    clickSound.currentTime = 0;
+    clickSound.play();
     drawFreeLine(currentPointIndex, index);
+
     currentPointIndex = index;
     updatePointAppearance();
 
+    // 4. 判断是否连到通关节点
     const completionIndex = level.completionPoint - 1;
     if (index === completionIndex) {
         completeLevel();
+    }
+}
+
+// ==========================================
+// 右键停止连线逻辑
+// ==========================================
+
+function stopCurrentStroke() {
+    if (levelCompleted) return;
+
+    const level = levels[currentLevelIndex];
+
+    // 如果处于自由连线模式且正在连线中
+    if (level.freeConnect && isDrawing) {
+        isDrawing = false;
+        strokeStartPoint = null;
+        currentPointIndex = -1; // 取消焦点点高亮
+        updatePointAppearance();
     }
 }
 
@@ -505,7 +527,7 @@ function updatePointAppearance() {
         circle.classList.remove("completed", "current");
 
         if (level.freeConnect) {
-            if (index === currentPointIndex) {
+            if (isDrawing && index === currentPointIndex) {
                 circle.classList.add("current");
             }
             return;
@@ -558,26 +580,23 @@ function fadeOutCompletedElements() {
 }
 
 // ==========================================
-// COMPLETE LEVEL (通关淡出逻辑)
+// COMPLETE LEVEL
 // ==========================================
 
 function completeLevel() {
     levelCompleted = true;
+    isDrawing = false;
 
-    // 1. beforeConnectionText 和 beforeConnectionImage 同时淡出，露出底层的 backgroundImage
     beforeConnectionText.style.opacity = "0";
     beforeConnectionImage.style.opacity = "0";
 
-    // 2. 淡出连接线和点
     fadeOutCompletedElements();
 
-    // 3. 停止动画
     svg.querySelectorAll(".point-circle.current").forEach(circle => {
         circle.classList.remove("current");
         circle.classList.add("completed");
     });
 
-    // 4. 显示下一关按钮
     if (currentLevelIndex < levels.length - 1) {
         nextButton.classList.remove("hidden");
     }
