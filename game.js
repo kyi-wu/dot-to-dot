@@ -12,11 +12,11 @@ const GAME_CONFIG = {
 // ==========================================
 
 const ENDING_CONFIG = {
-    text: "Thank you for playing",
-    backgroundColor: "#111111", // 背景颜色 (可自定义)
+    text: "Thank you for playing :)",
+    backgroundColor: "#dae6ab", // 背景颜色 (可自定义)
     textColor: "#FFFFFF",       // 文字颜色 (可自定义)
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", // 字体 (可自定义)
-    fontSize: "48px",           // 字体大小
+    fontFamily: "Reenie Beanie", // 字体 (可自定义)
+    fontSize: "52px",           // 字体大小
     fadeDuration: "2s"          // 淡入动画时长
 };
 
