@@ -747,16 +747,26 @@ function completeLevel() {
         }, 2200);
     }
 
-    // 4. 显示下一步按钮或结束页面（顺延至 3.5 秒后显示）
-    setTimeout(() => {
-        if (currentLevelIndex < levels.length - 1) {
-            nextButton.classList.remove("hidden");
-        } else {
-            showEndingPage();
-        }
-    }, 1000);
-}
+   // 4. 显示下一步按钮或结束页面
+    if (currentLevelIndex < levels.length - 1) {
 
+        // 普通关卡：3.5 秒后显示 Next
+        setTimeout(() => {
+            nextButton.classList.remove("hidden");
+        }, 1000);
+
+    } else {
+
+        // 最后一关：
+        // 给 completeImage 足够时间显示
+        // 再进入 Ending Page
+        setTimeout(() => {
+            showEndingPage();
+        }, 6000);
+
+    }
+
+}
 // ==========================================
 // SHOW ENDING PAGE
 // ==========================================
