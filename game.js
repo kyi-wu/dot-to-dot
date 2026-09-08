@@ -744,7 +744,7 @@ function completeLevel() {
         setTimeout(() => {
             completeImage.style.visibility = "visible";
             completeImage.style.opacity = "1";
-        }, 2500);
+        }, 2200);
     }
 
     // 4. 显示下一步按钮或结束页面（顺延至 3.5 秒后显示）
@@ -754,7 +754,7 @@ function completeLevel() {
         } else {
             showEndingPage();
         }
-    }, 3500);
+    }, 1000);
 }
 
 // ==========================================
