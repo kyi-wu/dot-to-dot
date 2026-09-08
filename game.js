@@ -232,7 +232,7 @@ svg.appendChild(beforeConnectionText);
 });
 
 // 禁用游戏区域的默认右键菜单
-svg.addEventListener("contextmenu", (e) => {
+document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     stopCurrentStroke(); // 触发停止连线
 });
@@ -251,6 +251,7 @@ let isDrawing = false;
 let strokeStartPoint = null;
 let currentStrokeLines = [];
 let completedStrokes = [];
+let hasShownFreeConnectHint = false; // 是否已经展示过自由连线右键提示
 
 // Timers
 let dialogTimer = null;
@@ -317,7 +318,7 @@ function loadLevel(levelIndex) {
     levelDialogText.textContent = "";
 
     // Remove old game elements
-    svg.querySelectorAll(".connection-line, .point-group").forEach(element => {
+    svg.querySelectorAll(".connection-line, .point-group, .free-connect-hint").forEach(element => {
         element.remove();
     });
 
@@ -444,6 +445,12 @@ function handleFreeConnect(index) {
         clickSound.currentTime = 0;
         clickSound.play();
         updatePointAppearance();
+
+        // 首次画第一笔时触发右键提示
+        if (!hasShownFreeConnectHint) {
+            showFreeConnectHint(index);
+            hasShownFreeConnectHint = true;
+        }
         return;
     }
 
@@ -464,6 +471,63 @@ function handleFreeConnect(index) {
         completeLevel();
     }
 }
+
+// ==========================================
+// 自由连线右键提示框
+// ==========================================
+
+function showFreeConnectHint(pointIndex) {
+    const level = levels[currentLevelIndex];
+    const point = level.points[pointIndex];
+    if (!point) return;
+
+    // 转换为屏幕坐标
+    const svgPoint = svg.createSVGPoint();
+    svgPoint.x = point.x;
+    svgPoint.y = point.y;
+    const screenPos = svgPoint.matrixTransform(svg.getScreenCTM());
+
+    // 创建 HTML 提示框元素
+    const hintElement = document.createElement("div");
+    hintElement.classList.add("free-connect-hint");
+    hintElement.textContent = "Rick click to end a connection";
+
+    // 设置基础定位属性
+    hintElement.style.position = "fixed";
+    hintElement.style.left = `${screenPos.x - 200}px`; // 偏移到点左侧
+    hintElement.style.top = `${screenPos.y - 20}px`;
+    hintElement.style.backgroundColor = "rgba(111, 178, 183, 0.75)";
+    hintElement.style.color = "#ffffff";
+    hintElement.style.padding = "8px 14px";
+    hintElement.style.borderRadius = "20px";
+    hintElement.style.fontSize = "14px";
+    hintElement.style.pointerEvents = "none";
+    hintElement.style.zIndex = "1000";
+    hintElement.style.whiteSpace = "nowrap";
+    hintElement.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+    hintElement.style.opacity = "0";
+    hintElement.style.transform = "translateY(0px)";
+    hintElement.style.transition = "opacity 1.5s ease, transform 3.6s ease";
+
+    document.body.appendChild(hintElement);
+
+    // 触发渐隐与缓动动画
+    requestAnimationFrame(() => {
+        // 1. 开始淡入显示
+        hintElement.style.opacity = "1";
+        
+        // 2. 淡入 0.5s 结束，再停留 1 秒，共等待 1.5 秒后开始淡出并上浮
+        setTimeout(() => {
+            hintElement.style.opacity = "0";
+            hintElement.style.transform = "translateY(-15px)"; // 缓缓向上浮动消失
+        }, 1500);
+
+        // 3. 动画彻底结束后从 DOM 中移除元素
+        setTimeout(() => {
+            hintElement.remove();
+        }, 3200);
+    });
+    }
 
 // ==========================================
 // 右键停止连线逻辑

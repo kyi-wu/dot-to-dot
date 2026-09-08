@@ -23,7 +23,7 @@ const levels = [
 
         // Player completes the level
         // when this point is connected.
-        completionPoint: 18,
+        completionPoint: 20,
 
         colors: {
             point: "#FFFFFF",
