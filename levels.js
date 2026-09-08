@@ -349,7 +349,7 @@ const levels = [
 
         // Change this to whatever point
         // should trigger completion.
-        completionPoint: 8,
+        completionPoint: 22,
 
         // This is the final level
         finalLevel: true,
@@ -369,7 +369,28 @@ const levels = [
         },
 
         points: [
-            // 你的 Level 5 points
+            { x: 407, y: 181 },
+            { x: 408, y: 329 },
+            { x: 487, y: 193 },
+            { x: 416, y: 256 },
+            { x: 496, y: 333 },
+            { x: 613, y: 198 },
+            { x: 543, y: 200 },
+            { x: 556, y: 328 },
+            { x: 636, y: 315 },
+            { x: 551, y: 259 },
+            { x: 632, y: 254 },
+            { x: 756, y: 187 },
+            { x: 685, y: 190 },
+            { x: 680, y: 313 },
+            { x: 756, y: 317 },
+            { x: 680, y: 248 },
+            { x: 756, y: 249 },
+            { x: 821, y: 269 },
+            { x: 919, y: 235 },
+            { x: 876, y: 169 },
+            { x: 813, y: 181 },
+            { x: 820, y: 317 }
         ]
     }
 
