@@ -13,6 +13,8 @@ const levels = [
         beforeConnectionText:
             "images/level0_before_connection_text.png",
 
+        completeImage: "images/level0_complete.png",
+
         showNumbers: true,
 
         // ---------------------------------
@@ -341,6 +343,8 @@ const levels = [
 
         beforeConnectionText:
             "images/level6_text.png",
+
+        completeImage: "images/level6_complete.png",
 
         showNumbers: true,
 

@@ -39,20 +39,18 @@ const DEFAULT_LEVEL_COLORS = {
 // ==========================================
 
 const svg = document.getElementById("game-svg");
-
 const backgroundImage = document.getElementById("background-image");
-
 const currentLevelElement = document.getElementById("currentLevel");
-
 const restartButton = document.getElementById("restart-button");
-
 const undoButton = document.getElementById("undo-button");
-
 const numbersButton = document.getElementById("numbers-button");
-
 const nextButton = document.getElementById("next-button");
-
 const messageElement = document.getElementById("message");
+
+// 隐藏 Undo 按钮
+if (undoButton) {
+    undoButton.style.display = "none";
+}
 
 // 创建 ENDING PAGE 节点
 const endingPage = document.createElement("div");
@@ -82,7 +80,6 @@ endingText.style.letterSpacing = "2px";
 endingPage.appendChild(endingText);
 document.body.appendChild(endingPage);
 
-
 // ==========================================
 // SOUND 音效
 // ==========================================
@@ -98,17 +95,14 @@ const backgroundMusic = new Audio("sounds/background.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.2;
 
-// Try to start immediately
 backgroundMusic.play().catch(() => {
     console.log("Waiting for user interaction to start music.");
 });
 
-// If autoplay is blocked, start music after the first user interaction
 document.addEventListener("click", function startMusic() {
     backgroundMusic.play().catch(() => {});
     document.removeEventListener("click", startMusic);
 });
-
 
 // ==========================================
 // LEVEL COMPLETION DIALOG
@@ -132,10 +126,10 @@ levelDialogBox.appendChild(levelDialogButton);
 levelDialog.appendChild(levelDialogBox);
 document.getElementById("game-board").appendChild(levelDialog);
 
-
 // ==========================================
 // LEVEL COMPLETION DIALOG - Text
 // ==========================================
+
 const LEVEL_DIALOG_CONFIG = {
     1: {
         x1: 1071,
@@ -210,60 +204,30 @@ function typeText(text) {
     levelDialogText.textContent = text;
 }
 
-function showContinueButton() {
-    levelDialog.classList.add("button-visible");
-}
-
-function fadeTextRandomly(speed) {
-    clearTimeout(eraseTimer);
-    const text = levelDialogText.textContent;
-    levelDialogText.innerHTML = "";
-    levelDialogText.style.whiteSpace = "pre-wrap";
-
-    const characters = Array.from(text).map(char => {
-        const span = document.createElement("span");
-        span.textContent = char;
-        span.style.display = "inline";
-        span.style.opacity = "1";
-        span.style.transition = "opacity 2.5s ease";
-        levelDialogText.appendChild(span);
-        return { char, span };
-    });
-
-    const availableCharacters = characters.filter(item => item.char.trim() !== "");
-    const shuffled = [...availableCharacters].sort(() => Math.random() - 0.5);
-
-    let index = 0;
-    function fadeNextCharacter() {
-        if (index >= shuffled.length) return;
-        shuffled[index].span.style.opacity = "0";
-        index++;
-        eraseTimer = setTimeout(fadeNextCharacter, speed);
-    }
-    fadeNextCharacter();
-}
-
 // ==========================================
 // SVG NAMESPACE & LAYER CREATION
 // ==========================================
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-// 创建图片层
+// 创建图片层，包含 completeImage
 const beforeConnectionImage = document.createElementNS(SVG_NS, "image");
 const beforeConnectionText = document.createElementNS(SVG_NS, "image");
+const completeImage = document.createElementNS(SVG_NS, "image"); // 新增：通关额外叠加图
 
 backgroundImage.classList.add("background-image");
 beforeConnectionImage.classList.add("before-connection-image");
 beforeConnectionText.classList.add("before-connection-text");
+completeImage.classList.add("complete-image");
 
-// 按从下到上的顺序添加到 SVG
+// 按从下到上的层级顺序添加到 SVG (completeImage 在最顶层)
 svg.appendChild(backgroundImage);
 svg.appendChild(beforeConnectionImage);
 svg.appendChild(beforeConnectionText);
+svg.appendChild(completeImage);
 
 // 设置覆盖与过渡动画
-[backgroundImage, beforeConnectionImage, beforeConnectionText].forEach(image => {
+[backgroundImage, beforeConnectionImage, beforeConnectionText, completeImage].forEach(image => {
     image.setAttribute("x", "0");
     image.setAttribute("y", "0");
     image.setAttribute("width", "100%");
@@ -283,7 +247,7 @@ document.addEventListener("contextmenu", (e) => {
 // ==========================================
 
 let currentLevelIndex = 0;
-let currentPointIndex = 0;
+let currentPointIndex = -1;
 let levelCompleted = false;
 let numbersVisible = true;
 
@@ -342,16 +306,16 @@ function loadLevel(levelIndex) {
 
     // SET IMAGES
     backgroundImage.classList.remove("revealed");
-    backgroundImage.setAttribute("href", level.image);
+    backgroundImage.setAttribute("href", level.image || "");
     beforeConnectionImage.setAttribute("href", level.beforeConnectionImage || "");
     beforeConnectionText.setAttribute("href", level.beforeConnectionText || "");
+    completeImage.setAttribute("href", level.completeImage || ""); // 设置通关完成图
 
-    svg.insertBefore(beforeConnectionImage, beforeConnectionText);
-    svg.insertBefore(backgroundImage, beforeConnectionImage);
-
+    // 初始显示连线前图片与背景图，隐藏通关完成图
     beforeConnectionImage.style.opacity = "1";
     beforeConnectionText.style.opacity = "1";
     backgroundImage.style.opacity = "1";
+    completeImage.style.opacity = "0";
 
     // Reset level dialog
     clearTimeout(dialogTimer);
@@ -683,9 +647,11 @@ function completeLevel() {
     levelCompleted = true;
     isDrawing = false;
 
+    // 1. 隐藏连线前的图形与文字（露底部的 backgroundImage）
     beforeConnectionText.style.opacity = "0";
     beforeConnectionImage.style.opacity = "0";
 
+    // 2. 点与连线淡出
     fadeOutCompletedElements();
 
     svg.querySelectorAll(".point-circle.current").forEach(circle => {
@@ -693,15 +659,23 @@ function completeLevel() {
         circle.classList.add("completed");
     });
 
-    // 判断是否为最后一关
-    if (currentLevelIndex < levels.length - 1) {
-        nextButton.classList.remove("hidden");
-    } else {
-        // 最后一关完成后，延迟 1.5 秒展示全屏 Ending Page 并定格
+    const level = levels[currentLevelIndex];
+
+    // 3. 如果当前关卡有 completeImage，在 1 秒后淡入浮现
+    if (level.completeImage) {
         setTimeout(() => {
-            showEndingPage();
-        }, 1500);
+            completeImage.style.opacity = "1";
+        }, 2000);
     }
+
+    // 4. 显示下一步按钮或结束页面
+    setTimeout(() => {
+        if (currentLevelIndex < levels.length - 1) {
+            nextButton.classList.remove("hidden");
+        } else {
+            showEndingPage();
+        }
+    }, 3000);
 }
 
 // ==========================================
@@ -722,6 +696,30 @@ levelDialogButton.addEventListener("click", () => {
     levelDialog.classList.remove("show", "button-visible");
     document.getElementById("next-button").click();
 });
+
+// ==========================================
+// NUMBERS VISIBILITY CONTROLS
+// ==========================================
+
+function updateNumbersVisibility() {
+    svg.querySelectorAll(".point-number").forEach(number => {
+        number.style.display = numbersVisible ? "block" : "none";
+    });
+}
+
+function updateNumbersButton() {
+    if (!numbersButton) return;
+    numbersButton.style.display = GAME_CONFIG.allowToggleNumbers ? "inline-block" : "none";
+    numbersButton.textContent = numbersVisible ? "Hide Numbers" : "Show Numbers";
+}
+
+if (numbersButton) {
+    numbersButton.addEventListener("click", () => {
+        numbersVisible = !numbersVisible;
+        updateNumbersVisibility();
+        updateNumbersButton();
+    });
+}
 
 // ==========================================
 // BUTTON CONTROLS
