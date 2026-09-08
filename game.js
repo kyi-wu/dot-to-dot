@@ -8,6 +8,19 @@ const GAME_CONFIG = {
 };
 
 // ==========================================
+// ENDING PAGE CONFIG (自定义 Ending 页面样式)
+// ==========================================
+
+const ENDING_CONFIG = {
+    text: "Thank you for playing",
+    backgroundColor: "#111111", // 背景颜色 (可自定义)
+    textColor: "#FFFFFF",       // 文字颜色 (可自定义)
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", // 字体 (可自定义)
+    fontSize: "48px",           // 字体大小
+    fadeDuration: "2s"          // 淡入动画时长
+};
+
+// ==========================================
 // DEFAULT LEVEL COLORS
 // ==========================================
 
@@ -40,6 +53,34 @@ const numbersButton = document.getElementById("numbers-button");
 const nextButton = document.getElementById("next-button");
 
 const messageElement = document.getElementById("message");
+
+// 创建 ENDING PAGE 节点
+const endingPage = document.createElement("div");
+endingPage.classList.add("ending-page");
+endingPage.style.position = "fixed";
+endingPage.style.top = "0";
+endingPage.style.left = "0";
+endingPage.style.width = "100vw";
+endingPage.style.height = "100vh";
+endingPage.style.backgroundColor = ENDING_CONFIG.backgroundColor;
+endingPage.style.display = "flex";
+endingPage.style.justifyContent = "center";
+endingPage.style.alignItems = "center";
+endingPage.style.opacity = "0";
+endingPage.style.pointerEvents = "none"; // 初始不可交互
+endingPage.style.transition = `opacity ${ENDING_CONFIG.fadeDuration} ease`;
+endingPage.style.zIndex = "9999";
+
+const endingText = document.createElement("h1");
+endingText.textContent = ENDING_CONFIG.text;
+endingText.style.color = ENDING_CONFIG.textColor;
+endingText.style.fontFamily = ENDING_CONFIG.fontFamily;
+endingText.style.fontSize = ENDING_CONFIG.fontSize;
+endingText.style.margin = "0";
+endingText.style.letterSpacing = "2px";
+
+endingPage.appendChild(endingText);
+document.body.appendChild(endingPage);
 
 
 // ==========================================
@@ -231,10 +272,10 @@ svg.appendChild(beforeConnectionText);
     image.style.transition = "opacity 1s ease";
 });
 
-// 禁用游戏区域的默认右键菜单
+// 全局禁用右键默认菜单，并在自由连线时中断当前笔画
 document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    stopCurrentStroke(); // 触发停止连线
+    stopCurrentStroke();
 });
 
 // ==========================================
@@ -251,7 +292,7 @@ let isDrawing = false;
 let strokeStartPoint = null;
 let currentStrokeLines = [];
 let completedStrokes = [];
-let hasShownFreeConnectHint = false; // 是否已经展示过自由连线右键提示
+let hasShownFreeConnectHint = false;
 
 // Timers
 let dialogTimer = null;
@@ -283,7 +324,7 @@ function loadLevel(levelIndex) {
     
     applyLevelColors(level);
 
-    currentPointIndex = -1; // 初始化为 -1 表示未选中任何点
+    currentPointIndex = -1;
     levelCompleted = false;
     isDrawing = false;
     strokeStartPoint = null;
@@ -294,6 +335,10 @@ function loadLevel(levelIndex) {
     currentLevelElement.textContent = levelIndex + 1;
     messageElement.textContent = "";
     nextButton.classList.add("hidden");
+
+    // Hide Ending Page on reload
+    endingPage.style.opacity = "0";
+    endingPage.style.pointerEvents = "none";
 
     // SET IMAGES
     backgroundImage.classList.remove("revealed");
@@ -437,7 +482,6 @@ function drawFreeLine(index1, index2) {
 function handleFreeConnect(index) {
     const level = levels[currentLevelIndex];
 
-    // 1. 如果尚未开始绘制，初始化当前一笔
     if (!isDrawing) {
         isDrawing = true;
         strokeStartPoint = index;
@@ -446,7 +490,6 @@ function handleFreeConnect(index) {
         clickSound.play();
         updatePointAppearance();
 
-        // 首次画第一笔时触发右键提示
         if (!hasShownFreeConnectHint) {
             showFreeConnectHint(index);
             hasShownFreeConnectHint = true;
@@ -454,10 +497,8 @@ function handleFreeConnect(index) {
         return;
     }
 
-    // 2. 如果点击的是同一个点，不作回应
     if (index === currentPointIndex) return;
 
-    // 3. 连线并播放音效
     clickSound.currentTime = 0;
     clickSound.play();
     drawFreeLine(currentPointIndex, index);
@@ -465,7 +506,6 @@ function handleFreeConnect(index) {
     currentPointIndex = index;
     updatePointAppearance();
 
-    // 4. 判断是否连到通关节点
     const completionIndex = level.completionPoint - 1;
     if (index === completionIndex) {
         completeLevel();
@@ -481,22 +521,19 @@ function showFreeConnectHint(pointIndex) {
     const point = level.points[pointIndex];
     if (!point) return;
 
-    // 转换为屏幕坐标
     const svgPoint = svg.createSVGPoint();
     svgPoint.x = point.x;
     svgPoint.y = point.y;
     const screenPos = svgPoint.matrixTransform(svg.getScreenCTM());
 
-    // 创建 HTML 提示框元素
     const hintElement = document.createElement("div");
     hintElement.classList.add("free-connect-hint");
-    hintElement.textContent = "Rick click to end a connection";
+    hintElement.textContent = "Right click to end a connection";
 
-    // 设置基础定位属性
     hintElement.style.position = "fixed";
-    hintElement.style.left = `${screenPos.x - 200}px`; // 偏移到点左侧
+    hintElement.style.left = `${screenPos.x - 200}px`;
     hintElement.style.top = `${screenPos.y - 20}px`;
-    hintElement.style.backgroundColor = "rgba(111, 178, 183, 0.75)";
+    hintElement.style.backgroundColor = "rgb(35, 108, 121)";
     hintElement.style.color = "#ffffff";
     hintElement.style.padding = "8px 14px";
     hintElement.style.borderRadius = "20px";
@@ -507,27 +544,23 @@ function showFreeConnectHint(pointIndex) {
     hintElement.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
     hintElement.style.opacity = "0";
     hintElement.style.transform = "translateY(0px)";
-    hintElement.style.transition = "opacity 1.5s ease, transform 3.6s ease";
+    hintElement.style.transition = "opacity 1.5s ease, transform 1.5s ease";
 
     document.body.appendChild(hintElement);
 
-    // 触发渐隐与缓动动画
     requestAnimationFrame(() => {
-        // 1. 开始淡入显示
         hintElement.style.opacity = "1";
         
-        // 2. 淡入 0.5s 结束，再停留 1 秒，共等待 1.5 秒后开始淡出并上浮
         setTimeout(() => {
             hintElement.style.opacity = "0";
-            hintElement.style.transform = "translateY(-15px)"; // 缓缓向上浮动消失
+            hintElement.style.transform = "translateY(-15px)";
         }, 1500);
 
-        // 3. 动画彻底结束后从 DOM 中移除元素
         setTimeout(() => {
             hintElement.remove();
         }, 3200);
     });
-    }
+}
 
 // ==========================================
 // 右键停止连线逻辑
@@ -538,11 +571,10 @@ function stopCurrentStroke() {
 
     const level = levels[currentLevelIndex];
 
-    // 如果处于自由连线模式且正在连线中
     if (level.freeConnect && isDrawing) {
         isDrawing = false;
         strokeStartPoint = null;
-        currentPointIndex = -1; // 取消焦点点高亮
+        currentPointIndex = -1;
         updatePointAppearance();
     }
 }
@@ -661,9 +693,24 @@ function completeLevel() {
         circle.classList.add("completed");
     });
 
+    // 判断是否为最后一关
     if (currentLevelIndex < levels.length - 1) {
         nextButton.classList.remove("hidden");
+    } else {
+        // 最后一关完成后，延迟 1.5 秒展示全屏 Ending Page 并定格
+        setTimeout(() => {
+            showEndingPage();
+        }, 1500);
     }
+}
+
+// ==========================================
+// SHOW ENDING PAGE
+// ==========================================
+
+function showEndingPage() {
+    endingPage.style.pointerEvents = "all";
+    endingPage.style.opacity = "1";
 }
 
 // ==========================================
